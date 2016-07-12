@@ -7,9 +7,9 @@ import java.math.BigDecimal
 /**
  * Created by Aetherna on 2016-07-12.
  */
-class MainInteractor{
+open class MainInteractor {
 
-    fun getTodayOutstandingLimit() : Money{
+    open fun getTodayOutstandingLimit(): Money {
         return Money.of(CurrencyUnit.GBP, BigDecimal.valueOf(100));
     }
 }

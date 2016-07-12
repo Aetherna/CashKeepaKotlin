@@ -1,8 +1,6 @@
 package com.aethernadev.cashkeepakotlin.main.activity
 
 import com.aethernadev.cashkeepakotlin.base.BasePresenter
-import com.aethernadev.cashkeepakotlin.base.UIAction
-
 import java.math.BigDecimal
 
 /**
@@ -11,18 +9,13 @@ import java.math.BigDecimal
 class MainPresenter(val interactor: MainInteractor) : BasePresenter<MainUI>() {
 
     fun onClickMeh() {
-        var action = present { ui?.displaySnackBar() }
-        present { action }
+        presentOn({ ui: MainUI? -> ui?.displaySnackBar() })
     }
 
     fun loadLimit() {
         var outstandingLimit = interactor.getTodayOutstandingLimit();
-        var action: UIAction<MainUI> = object : UIAction<MainUI> { //todo try to use function
-            override fun executeOnUI(ui: MainUI) {
-                ui?.displayOutstandingLimit(outstandingLimit.currencyUnit.code, outstandingLimit.amount)
-            }
-        }
-        presentAction(action);
+        var limitWithCurrency = { ui: MainUI? -> ui?.displayOutstandingLimit(outstandingLimit.currencyUnit.code, outstandingLimit.amount) }
+        presentOn(limitWithCurrency)
     }
 }
 

@@ -1,7 +1,8 @@
 package com.aethernadev.cashkeepakotlin.base
 
 import android.app.Activity
-import com.aethernadev.cashkeepakotlin.main.activity.MainUI
+import java.util.*
+
 
 /**
  * Created by Aetherna on 2016-07-11.
@@ -29,33 +30,22 @@ abstract class BaseActivity<Presenter : BasePresenter<UI>, UI> : Activity() {
 
 open class BasePresenter<UI>() {
 
-    var pendingUIActions: MutableList<UIAction<UI>> = mutableListOf()
+    var pendingUIActions: Queue<(ui: UI) -> Unit?> = LinkedList()
     var ui: UI? = null
 
-    fun presentAction(uiAction: UIAction<UI>) {
-        if (ui != null) {
-            uiAction.executeOnUI(ui as UI) //todo check as
-        } else {
-            pendingUIActions.add(uiAction)
-        }
-    }
 
-    fun < T> present(body: () -> T): T {
-        val action: UIAction<UI> =  uIAction<UI> { //todo wtf
-            override fun executeOnUI(ui: UI) {
-                body()
-            }
+    fun presentOn(action: (ui: UI?) -> Unit?) {
+        if (ui != null) {
+            action(this.ui)
+        } else {
+            pendingUIActions.add(action)
         }
-        return action
     }
 
     fun attach(ui: UI) {
         this.ui = ui
-        if (pendingUIActions.isNotEmpty()) {
-            pendingUIActions.forEach {
-                it.executeOnUI(ui)
-            }
-            pendingUIActions.clear() //todo hymm mutithread
+        while (pendingUIActions.isNotEmpty()) {
+            pendingUIActions.poll().invoke(ui)
         }
     }
 
@@ -63,8 +53,4 @@ open class BasePresenter<UI>() {
         this.ui = null;
     }
 
-}
-
-interface UIAction<UI> {
-    fun executeOnUI(ui: UI)
 }

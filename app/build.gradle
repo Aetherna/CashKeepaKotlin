@@ -28,6 +28,12 @@ def anko_version = '0.9';
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
     testCompile 'junit:junit:4.12'
+    testCompile 'org.mockito:mockito-core:2.0.86-beta'
+    testCompile ('com.nhaarman:mockito-kotlin:0.5.1'){
+        exclude group: "org.jetbrains.kotlin", module: "kotlin-stdlib"
+    }
+    testCompile "com.google.truth:truth:0.28"
+
     compile "com.android.support:appcompat-v7:$support_version"
     compile "com.android.support:design:$support_version"
     compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
