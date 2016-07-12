@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">CashKeepaKotlin</string>
+    <string name="action_settings">Settings</string>
+</resources>
