@@ -2,6 +2,7 @@ package com.aethernadev.cashkeepakotlin.main.activity
 
 import android.os.Bundle
 import android.widget.TextView
+import com.aethernadev.cashkeepakotlin.CashKeepaRepo
 import com.aethernadev.cashkeepakotlin.R
 import com.aethernadev.cashkeepakotlin.base.BaseActivity
 import org.jetbrains.anko.*
@@ -36,7 +37,7 @@ class MainActivity : BaseActivity<MainPresenter, MainUI>(), MainUI {
                 }
             }
         }
-        val interactor = MainInteractor()
+        val interactor = MainInteractor(CashKeepaRepo())
         presenter = MainPresenter(interactor);
 
         presenter?.loadLimit();
