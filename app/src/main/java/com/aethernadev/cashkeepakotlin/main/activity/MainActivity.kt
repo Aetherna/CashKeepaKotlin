@@ -2,7 +2,7 @@ package com.aethernadev.cashkeepakotlin.main.activity
 
 import android.os.Bundle
 import android.widget.TextView
-import com.aethernadev.cashkeepakotlin.CashKeepaRepo
+import com.aethernadev.cashkeepakotlin.CKApp
 import com.aethernadev.cashkeepakotlin.R
 import com.aethernadev.cashkeepakotlin.base.BaseActivity
 import org.jetbrains.anko.*
@@ -11,7 +11,8 @@ import java.math.BigDecimal
 
 class MainActivity : BaseActivity<MainPresenter, MainUI>(), MainUI {
 
-    var textView: TextView? = null;
+    val mainPresenter: MainPresenter by injector.instance()
+    var textView: TextView? = null
 
     override fun displayOutstandingLimit(code: String, amount: BigDecimal) {
         textView?.text = amount.toPlainString() + " " + code
@@ -27,6 +28,7 @@ class MainActivity : BaseActivity<MainPresenter, MainUI>(), MainUI {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        injector.inject((application as CKApp).kodein)
         verticalLayout(theme = R.style.MainScreenContainer) {
             textView = textView(theme = R.style.StandardFont) {
                 text = "Hello Anko!"
@@ -37,10 +39,8 @@ class MainActivity : BaseActivity<MainPresenter, MainUI>(), MainUI {
                 }
             }
         }
-        val interactor = MainInteractor(CashKeepaRepo())
-        presenter = MainPresenter(interactor);
-
-        presenter?.loadLimit();
+        presenter = mainPresenter
+        presenter?.loadLimit()
     }
 }
 

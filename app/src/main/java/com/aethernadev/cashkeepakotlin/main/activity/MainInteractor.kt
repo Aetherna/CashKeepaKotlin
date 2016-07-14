@@ -1,6 +1,6 @@
 package com.aethernadev.cashkeepakotlin.main.activity
 
-import com.aethernadev.cashkeepakotlin.Repo
+import com.aethernadev.cashkeepakotlin.repo.Repo
 import org.joda.money.Money
 
 /**

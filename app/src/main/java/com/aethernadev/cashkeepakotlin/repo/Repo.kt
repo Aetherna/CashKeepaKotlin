@@ -1,4 +1,4 @@
-package com.aethernadev.cashkeepakotlin
+package com.aethernadev.cashkeepakotlin.repo
 
 import org.joda.money.CurrencyUnit
 import org.joda.money.Money
@@ -14,7 +14,7 @@ interface Repo {
 
 class CashKeepaRepo : Repo {
     override fun getTodayOutstandingLimit(): Money {
-        return Money.of(CurrencyUnit.GBP, BigDecimal.valueOf(100));
+        return Money.of(CurrencyUnit.GBP, BigDecimal.valueOf(100))
     }
 
 }

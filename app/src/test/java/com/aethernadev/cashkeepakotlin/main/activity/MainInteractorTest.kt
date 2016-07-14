@@ -1,6 +1,6 @@
 package com.aethernadev.cashkeepakotlin.main.activity
 
-import com.aethernadev.cashkeepakotlin.Repo
+import com.aethernadev.cashkeepakotlin.repo.Repo
 import com.google.common.truth.Truth
 import com.nhaarman.mockito_kotlin.mock
 import com.nhaarman.mockito_kotlin.whenever
@@ -18,7 +18,7 @@ class MainInteractorTest {
 
     val TEST_MONI = Money.of(CurrencyUnit.USD, BigDecimal.valueOf(200))
     val repo: Repo = mock()
-    val mainInteractor: MainInteractor = MainInteractor(repo);
+    val mainInteractor: MainInteractor = MainInteractor(repo)
 
     @Test
     fun testGetTodayOutstandingLimit() {

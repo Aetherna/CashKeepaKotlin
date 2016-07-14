@@ -1,7 +1,7 @@
 package com.aethernadev.cashkeepakotlin.base
 
 import android.app.Activity
-import java.util.*
+import com.github.salomonbrys.kodein.KodeinInjector
 
 
 /**
@@ -9,7 +9,8 @@ import java.util.*
  */
 abstract class BaseActivity<Presenter : BasePresenter<UI>, UI> : Activity() {
 
-    var presenter: Presenter? = null;
+    val injector = KodeinInjector()
+    open var presenter: Presenter? = null
 
     abstract fun getUI(): UI
 
