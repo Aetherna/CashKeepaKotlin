@@ -8,6 +8,7 @@ buildscript {
     dependencies {
         classpath 'com.android.tools.build:gradle:2.1.2'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+        classpath "org.jetbrains.kotlin:kotlin-android-extensions:$kotlin_version"
         classpath 'org.codehaus.groovy:gradle-groovy-android-plugin:0.3.6'
         classpath "io.realm:realm-gradle-plugin:1.1.0"
 

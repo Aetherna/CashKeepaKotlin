@@ -1,8 +1,9 @@
 package com.aethernadev.cashkeepakotlin
 
 import android.test.ApplicationTestCase
-import com.aethernadev.cashkeepakotlin.main.activity.MainInteractor
-import com.aethernadev.cashkeepakotlin.main.activity.MainPresenter
+import com.aethernadev.cashkeepakotlin.home.HomeInteractor
+import com.aethernadev.cashkeepakotlin.home.HomePresenter
+import com.aethernadev.cashkeepakotlin.main.MainInteractor
 import com.aethernadev.cashkeepakotlin.repo.Repo
 import com.github.salomonbrys.kodein.KodeinInjector
 import org.junit.Assert
@@ -15,8 +16,10 @@ class CKAppTest : ApplicationTestCase<CKApp>(CKApp::class.java) {
 
     val injector = KodeinInjector()
     val repo: Repo by injector.instance()
-    val interactor: MainInteractor by injector.instance()
-    val presenter: MainPresenter by injector.instance()
+    val homeInteractor: HomeInteractor by injector.instance()
+    val homePresenter: HomePresenter by injector.instance()
+
+    val mainInteractor: MainInteractor by injector.instance()
 
     @Test
     fun testGetKodein() {
@@ -26,10 +29,12 @@ class CKAppTest : ApplicationTestCase<CKApp>(CKApp::class.java) {
         injector.inject(application.kodein)
         //then
         Assert.assertNotNull(repo)
-        Assert.assertNotNull(interactor)
-        Assert.assertNotNull(interactor.repo)
-        Assert.assertNotNull(presenter)
-        Assert.assertNotNull(presenter.interactor)
-        Assert.assertNotNull(presenter.interactor.repo)
+        Assert.assertNotNull(homeInteractor)
+        Assert.assertNotNull(homeInteractor.repo)
+        Assert.assertNotNull(homePresenter)
+        Assert.assertNotNull(homePresenter.interactor)
+        Assert.assertNotNull(homePresenter.interactor.repo)
+
+        Assert.assertNotNull(mainInteractor.sharedPreferences)
     }
 }

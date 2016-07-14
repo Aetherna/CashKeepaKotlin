@@ -1,20 +1,18 @@
-package com.aethernadev.cashkeepakotlin.repo.models
+package com.aethernadev.cashkeepakotlin.repo.dbmodels
 
 import io.realm.RealmObject
-import java.math.BigDecimal
 
 /**
  * Created by Aetherna on 2016-07-14.
  */
+open class Expense : RealmObject(){
+    open var date: Long? = null
+    open var amount: String? = null
+}
 
 open class ExpenseLimit : RealmObject() {
 
     open var amount: String? = null
     open var currency: String? = null
     open var type: String? = null
-
-}
-
-enum class ExpenseLimitType {
-    DAILY, WEEKLY, MONTHLY
 }
