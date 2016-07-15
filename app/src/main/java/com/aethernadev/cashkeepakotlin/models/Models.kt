@@ -17,3 +17,6 @@ data class Limit(var created: DateTime, var amount: Money, var type: ExpenseLimi
 data class Expense(var created: DateTime, var amount: Money) { //todo add type
 }
 
+enum class ExpenseCategory {
+    FOOD, ENTERTAINMENT, TRANSPORT, UTILITIES, CLOTHING, MISCELLANEOUS
+}

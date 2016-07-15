@@ -1,7 +1,7 @@
 package com.aethernadev.cashkeepakotlin.main
 
-import android.app.Fragment
 import android.os.Bundle
+import android.support.v4.app.Fragment
 import android.widget.TextView
 import com.aethernadev.cashkeepakotlin.CKApp
 import com.aethernadev.cashkeepakotlin.R
@@ -21,11 +21,9 @@ class MainActivity : BaseActivity<MainPresenter, MainUI>(), MainUI {
         super.onCreate(savedInstanceState)
         injector.inject((application as CKApp).kodein)
 
-
         frameLayout(theme = R.style.MainScreenContainer) {
             id = fragmentContainerId
         }
-
 
         presenter = mainPresenter
         presenter?.loadView()
@@ -44,12 +42,12 @@ class MainActivity : BaseActivity<MainPresenter, MainUI>(), MainUI {
     }
 
     fun displayFragment(fragment: Fragment) {
-        val transaction = fragmentManager.beginTransaction()
+        val transaction = supportFragmentManager.beginTransaction()
         transaction?.replace(fragmentContainerId, fragment)
         transaction?.commit()
     }
 
-    fun onConfigDone(){
+    fun onConfigDone() {
         presenter?.onConfigDone()
     }
 

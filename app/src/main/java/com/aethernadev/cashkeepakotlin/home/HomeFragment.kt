@@ -9,7 +9,11 @@ import android.widget.TextView
 import com.aethernadev.cashkeepakotlin.R
 import com.aethernadev.cashkeepakotlin.base.BaseFragment
 import com.aethernadev.cashkeepakotlin.snackbar
-import org.jetbrains.anko.*
+import org.jetbrains.anko.button
+import org.jetbrains.anko.onClick
+import org.jetbrains.anko.support.v4.UI
+import org.jetbrains.anko.textView
+import org.jetbrains.anko.verticalLayout
 import java.math.BigDecimal
 
 /**
