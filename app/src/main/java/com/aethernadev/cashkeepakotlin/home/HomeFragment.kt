@@ -6,8 +6,10 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import com.aethernadev.cashkeepakotlin.CKApp
 import com.aethernadev.cashkeepakotlin.R
 import com.aethernadev.cashkeepakotlin.base.BaseFragment
+import com.aethernadev.cashkeepakotlin.models.Category
 import com.aethernadev.cashkeepakotlin.snackbar
 import org.jetbrains.anko.button
 import org.jetbrains.anko.onClick
@@ -21,6 +23,7 @@ import java.math.BigDecimal
  */
 class HomeFragment : BaseFragment<HomePresenter, HomeUI>(), HomeUI {
 
+    val homePresenter: HomePresenter by injector.instance()
     var textView: TextView? = null
 
     override fun getUI(): HomeUI {
@@ -31,17 +34,17 @@ class HomeFragment : BaseFragment<HomePresenter, HomeUI>(), HomeUI {
         textView?.text = amount.toPlainString() + " " + code
     }
 
-    override fun displaySnackBar() {
-        snackbar("Sob sob snackbar", Snackbar.LENGTH_LONG)
+    override fun displaySnackBar(categories: List<Category>) {
+        val categoriesList = categories.map { c -> c.name }.reduce { s1, s2 -> s1 + s2 }
+        snackbar("Sob sob snackbar : " + categoriesList, Snackbar.LENGTH_LONG)
     }
 
-
-
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View {
-        return UI {
+        injector.inject((activity.application as CKApp).kodein)
+        val view = UI {
             verticalLayout {
                 textView = textView(theme = R.style.StandardFont) {
-                    text = "Hello Anko!"
+                    text = "Hello Anko........!"
                 }
                 button(text = "Click meh!") {
                     onClick {
@@ -50,5 +53,12 @@ class HomeFragment : BaseFragment<HomePresenter, HomeUI>(), HomeUI {
                 }
             }
         }.view
+        presenter = homePresenter;
+        return view;
     }
- }
+
+    override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        presenter?.loadLimit()
+    }
+}

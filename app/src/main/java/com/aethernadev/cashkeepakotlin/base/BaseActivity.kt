@@ -23,5 +23,6 @@ abstract class BaseActivity<Presenter : BasePresenter<UI>, UI> : AppCompatActivi
         super.onResume()
         presenter?.attach(getUI())
     }
+
 }
 

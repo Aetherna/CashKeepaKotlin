@@ -3,7 +3,6 @@ package com.aethernadev.cashkeepakotlin
 
 import android.R
 import android.app.Activity
-
 import android.support.design.widget.Snackbar
 import android.support.v4.app.Fragment
 import android.view.View
@@ -37,3 +36,5 @@ fun Fragment.snackbar(text: Int, duration: Int = Snackbar.LENGTH_SHORT, init: Sn
         getView()?.snackbar(text, duration, init)
 
 fun Fragment.text(text: Int): CharSequence? = resources.getText(text)
+fun Activity.color(colorRes: Int): Int = resources.getColor(colorRes)
+fun Fragment.color(colorRes: Int): Int = resources.getColor(colorRes)

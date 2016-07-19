@@ -1,6 +1,7 @@
 package com.aethernadev.cashkeepakotlin.home
 
 import com.nhaarman.mockito_kotlin.mock
+import com.nhaarman.mockito_kotlin.whenever
 import org.joda.money.CurrencyUnit
 import org.joda.money.Money
 import org.junit.Before
@@ -26,8 +27,10 @@ class HomePresenterTest {
     @Test
     fun should_display_toast_on_click() {
 
+         whenever(homeInteractor.getCategories()).thenReturn(listOf())
+
         homePresenter.onClickMeh()
-        verify<HomeUI>(ui).displaySnackBar()
+        verify<HomeUI>(ui).displaySnackBar(homeInteractor.getCategories())
     }
 
     @Test

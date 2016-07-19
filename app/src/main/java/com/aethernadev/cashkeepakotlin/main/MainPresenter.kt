@@ -11,7 +11,7 @@ class MainPresenter(val interactor: MainInteractor): BasePresenter<MainUI>() {
         if (interactor.isAppConfigured()) {
             presentOn { ui: MainUI? -> ui?.loadHomeView() }
         } else {
-            presentOn {  ui: MainUI? -> ui?.loadWelcomeView() }
+            presentOn {  ui: MainUI? -> ui?.loadSetupView() }
         }
     }
 
@@ -23,6 +23,6 @@ class MainPresenter(val interactor: MainInteractor): BasePresenter<MainUI>() {
 
 
 interface MainUI{
-    fun loadWelcomeView()
+    fun loadSetupView()
     fun loadHomeView()
 }

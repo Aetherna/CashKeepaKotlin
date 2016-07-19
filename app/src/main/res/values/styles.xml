@@ -13,23 +13,44 @@
         <item name="windowNoTitle">true</item>
     </style>
 
+    <style name="CoordinatorLayout">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">match_parent</item>
+        <item name="android:fitsSystemWindows">true</item>
+    </style>
+
     <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar"/>
 
+    <style name="AppBar" parent="AppTheme.AppBarOverlay">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+    </style>
+
     <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light"/>
+
+    <style name="Toolbar" parent="AppTheme.PopupOverlay">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">?attr/actionBarSize</item>
+        <item name="android:background">?attr/colorPrimary</item>
+        <item name="android:textColor">@color/toolbarTextColor</item>
+        <item name="android:paddingTop">@dimen/toolbar_padding</item>
+        <item name="android:paddingBottom">@dimen/toolbar_padding</item>
+    </style>
 
     <style name="MainScreenContainer" parent="AppTheme">
         <item name="android:gravity">center_horizontal</item>
         <item name="android:layout_height">match_parent</item>
         <item name="android:layout_width">match_parent</item>
+        <item name="android:padding">@dimen/toolbar_padding</item>
     </style>
 
-    <style name="WelcomeStepsPager">
+    <style name="WelcomeStepsPager" parent="AppTheme">
         <item name="android:layout_width">match_parent</item>
-        <item name="android:layout_height">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
     </style>
 
-    <style name="CKTabStrip">
-        <item name="android:layout_alignParentTop">true</item>
+    <style name="CKTabStrip" parent="AppTheme">
+        <item name="android:layout_alignParentBottom">true</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_width">match_parent</item>
     </style>
@@ -37,6 +58,23 @@
     <style name="StandardFont">
         <item name="android:textSize">@dimen/standard_text_size</item>
         <item name="android:textColor">@color/colorPrimary</item>
+    </style>
+
+    <style name="PrimaryButton" parent="Theme.AppCompat.Light">
+        <item name="colorControlHighlight">@color/lightPrimaryColor</item>
+        <item name="colorButtonNormal">@color/colorPrimary</item>
+        <item name="android:textColor">@color/toolbarTextColor</item>
+        <item name="android:gravity">center</item>
+    </style>
+
+    <style name="Match">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">match_parent</item>
+    </style>
+
+    <style name="HeaderText">
+        <item name="android:textSize">20sp</item>
+        <item name="android:layout_marginBottom">20dp</item>
     </style>
 
 </resources>

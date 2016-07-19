@@ -9,9 +9,14 @@ import com.aethernadev.cashkeepakotlin.main.MainInteractor
 import com.aethernadev.cashkeepakotlin.main.MainPresenter
 import com.aethernadev.cashkeepakotlin.repo.CashKeepaRepo
 import com.aethernadev.cashkeepakotlin.repo.Repo
+import com.aethernadev.cashkeepakotlin.setup.SetupCategoriesPresenter
+import com.aethernadev.cashkeepakotlin.setup.SetupInteractor
+import com.aethernadev.cashkeepakotlin.setup.SetupLimitPresenter
 import com.github.salomonbrys.kodein.Kodein
 import com.github.salomonbrys.kodein.android.KodeinApplication
 import com.github.salomonbrys.kodein.singleton
+import io.realm.Realm
+import io.realm.RealmConfiguration
 
 /**
  * Created by Aetherna on 2016-07-14.
@@ -22,13 +27,24 @@ class CKApp : Application(), KodeinApplication {
     val appConfigSharedPrefsName: String = "CashKeepaSharedPreferences"
 
     override val kodein = Kodein {
-        bind<Repo>() with singleton { CashKeepaRepo() }
+
+        bind<Realm>() with singleton { initRealm() }
+        bind<Repo>() with singleton { CashKeepaRepo(instance()) }
 
         bind<MainInteractor>() with singleton { MainInteractor(getAppSharedPrefsFile()) }//todo add shared prefs
         bind<MainPresenter>() with singleton { MainPresenter(instance()) }
 
         bind<HomeInteractor>() with singleton { HomeInteractor(instance()) }
         bind<HomePresenter>() with singleton { HomePresenter(instance()) }
+
+        bind<SetupInteractor>() with singleton { SetupInteractor(instance()) }
+        bind<SetupLimitPresenter>() with singleton { SetupLimitPresenter(instance()) }
+        bind<SetupCategoriesPresenter>() with singleton { SetupCategoriesPresenter(instance()) }
+    }
+
+    fun initRealm(): Realm {
+        val realmConfig = RealmConfiguration.Builder(this@CKApp).build()
+        return Realm.getInstance(realmConfig)
     }
 
     fun getAppSharedPrefsFile(): SharedPreferences {
