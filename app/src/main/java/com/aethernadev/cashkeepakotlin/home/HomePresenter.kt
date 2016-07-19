@@ -10,7 +10,14 @@ import java.math.BigDecimal
 class HomePresenter(val interactor: HomeInteractor) : BasePresenter<HomeUI>() {
 
     fun onClickMeh() {
-        presentOn({ ui: HomeUI? -> ui?.displaySnackBar(interactor.getCategories()) })
+
+        interactor.getCategories(
+                { categories ->
+                    presentOn({ ui: HomeUI? -> ui?.displaySnackBar(categories) })
+                },
+                { error ->
+                    presentOn { ui: HomeUI? -> ui?.displayError() }
+                })
     }
 
     fun loadLimit() {
@@ -25,4 +32,6 @@ interface HomeUI {
     fun displaySnackBar(categories: List<Category>)
 
     fun displayOutstandingLimit(code: String, amount: BigDecimal)
+
+    fun displayError()
 }

@@ -57,6 +57,9 @@ dependencies {
     compile 'net.danlew:android.joda:2.9.4.1'
 
     compile 'com.github.salomonbrys.kodein:kodein-android:2.8.0'
+
+    compile 'io.reactivex:rxkotlin:0.60.0'
+    compile 'io.reactivex:rxandroid:1.2.1'
 }
 repositories {
     mavenCentral()

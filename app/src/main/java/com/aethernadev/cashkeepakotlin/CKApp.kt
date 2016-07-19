@@ -3,6 +3,7 @@ package com.aethernadev.cashkeepakotlin
 import android.app.Application
 import android.content.Context
 import android.content.SharedPreferences
+import com.aethernadev.cashkeepakotlin.base.SchedulersWrapper
 import com.aethernadev.cashkeepakotlin.home.HomeInteractor
 import com.aethernadev.cashkeepakotlin.home.HomePresenter
 import com.aethernadev.cashkeepakotlin.main.MainInteractor
@@ -17,6 +18,8 @@ import com.github.salomonbrys.kodein.android.KodeinApplication
 import com.github.salomonbrys.kodein.singleton
 import io.realm.Realm
 import io.realm.RealmConfiguration
+import rx.android.schedulers.AndroidSchedulers
+import rx.schedulers.Schedulers
 
 /**
  * Created by Aetherna on 2016-07-14.
@@ -30,11 +33,12 @@ class CKApp : Application(), KodeinApplication {
 
         bind<Realm>() with singleton { initRealm() }
         bind<Repo>() with singleton { CashKeepaRepo(instance()) }
+        bind<SchedulersWrapper>() with singleton { SchedulersWrapper(Schedulers.computation(), AndroidSchedulers.mainThread()) }
 
         bind<MainInteractor>() with singleton { MainInteractor(getAppSharedPrefsFile()) }//todo add shared prefs
         bind<MainPresenter>() with singleton { MainPresenter(instance()) }
 
-        bind<HomeInteractor>() with singleton { HomeInteractor(instance()) }
+        bind<HomeInteractor>() with singleton { HomeInteractor(instance(), instance()) }
         bind<HomePresenter>() with singleton { HomePresenter(instance()) }
 
         bind<SetupInteractor>() with singleton { SetupInteractor(instance()) }

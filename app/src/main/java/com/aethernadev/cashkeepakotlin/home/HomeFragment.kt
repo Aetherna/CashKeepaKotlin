@@ -39,6 +39,10 @@ class HomeFragment : BaseFragment<HomePresenter, HomeUI>(), HomeUI {
         snackbar("Sob sob snackbar : " + categoriesList, Snackbar.LENGTH_LONG)
     }
 
+    override fun displayError() {
+        snackbar("Ups error")
+    }
+
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View {
         injector.inject((activity.application as CKApp).kodein)
         val view = UI {
