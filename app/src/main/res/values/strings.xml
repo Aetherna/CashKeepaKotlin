@@ -1,6 +1,7 @@
 <resources>
     <string name="app_name">CashKeepaKotlin</string>
     <string name="action_settings">Settings</string>
+    <!-- setup -->
     <string name="limit">Limit</string>
     <string name="categories">Categories</string>
     <string name="select_categories">Select categories</string>
@@ -9,4 +10,6 @@
     <string name="per_week">Per week</string>
     <string name="per_month">Per month</string>
     <string name="done">Done</string>
+    <!-- home -->
+    <string name="add_expense">Add expense</string>
 </resources>

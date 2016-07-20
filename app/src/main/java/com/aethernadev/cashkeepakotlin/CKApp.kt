@@ -35,7 +35,7 @@ class CKApp : Application(), KodeinApplication {
         bind<Repo>() with singleton { CashKeepaRepo(instance()) }
         bind<SchedulersWrapper>() with singleton { SchedulersWrapper(Schedulers.computation(), AndroidSchedulers.mainThread()) }
 
-        bind<MainInteractor>() with singleton { MainInteractor(getAppSharedPrefsFile()) }//todo add shared prefs
+        bind<MainInteractor>() with singleton { MainInteractor(getAppSharedPrefsFile()) }
         bind<MainPresenter>() with singleton { MainPresenter(instance()) }
 
         bind<HomeInteractor>() with singleton { HomeInteractor(instance(), instance()) }

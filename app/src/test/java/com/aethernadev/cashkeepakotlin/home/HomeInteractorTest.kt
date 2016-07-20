@@ -3,12 +3,13 @@ package com.aethernadev.cashkeepakotlin.home
 import com.aethernadev.cashkeepakotlin.base.SchedulersWrapper
 import com.aethernadev.cashkeepakotlin.models.Category
 import com.aethernadev.cashkeepakotlin.repo.Repo
-import com.google.common.truth.Truth
+import com.google.common.truth.Truth.assertThat
 import com.nhaarman.mockito_kotlin.mock
 import com.nhaarman.mockito_kotlin.whenever
 import org.joda.money.CurrencyUnit
 import org.joda.money.Money
 import org.junit.Test
+import rx.observers.TestSubscriber
 import rx.schedulers.Schedulers
 import java.math.BigDecimal
 
@@ -30,17 +31,22 @@ class HomeInteractorTest {
         //when
         val result = homeInteractor.getTodayOutstandingLimit()
 
-        Truth.assertThat(result).isEqualTo(TEST_MONI)
+        //then
+        assertThat(result).isEqualTo(TEST_MONI)
     }
 
     @Test
     fun testCategories() {
         //having
         whenever(repo.getCategories()).thenReturn(listOf(Category.FOOD, Category.CLOTHING))
+        val testSubscriber: TestSubscriber<List<Category>> = TestSubscriber()
 
-        homeInteractor.getCategories(
-                { categories -> Truth.assertThat(categories).isNotEmpty() }
-                , { error -> }
-        )
+        //when
+        homeInteractor.getCategories().subscribe(testSubscriber)
+
+        //then
+        testSubscriber.assertNoErrors()
+        testSubscriber.assertReceivedOnNext(mutableListOf(listOf(Category.FOOD, Category.CLOTHING)))
+
     }
 }

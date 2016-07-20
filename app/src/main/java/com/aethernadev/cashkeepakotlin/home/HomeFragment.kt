@@ -11,6 +11,7 @@ import com.aethernadev.cashkeepakotlin.R
 import com.aethernadev.cashkeepakotlin.base.BaseFragment
 import com.aethernadev.cashkeepakotlin.models.Category
 import com.aethernadev.cashkeepakotlin.snackbar
+import com.aethernadev.cashkeepakotlin.text
 import org.jetbrains.anko.button
 import org.jetbrains.anko.onClick
 import org.jetbrains.anko.support.v4.UI
@@ -50,15 +51,15 @@ class HomeFragment : BaseFragment<HomePresenter, HomeUI>(), HomeUI {
                 textView = textView(theme = R.style.StandardFont) {
                     text = "Hello Anko........!"
                 }
-                button(text = "Click meh!") {
+                button(text = text(R.string.add_expense)) {
                     onClick {
-                        presenter?.onClickMeh()
+                        presenter?.onAddExpenseClick()
                     }
                 }
             }
         }.view
-        presenter = homePresenter;
-        return view;
+        presenter = homePresenter
+        return view
     }
 
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {

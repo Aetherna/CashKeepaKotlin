@@ -6,6 +6,7 @@ import com.aethernadev.cashkeepakotlin.models.Category
 import com.aethernadev.cashkeepakotlin.repo.Repo
 import org.joda.money.Money
 import rx.Observable
+import rx.Subscriber
 
 /**
  * Created by Aetherna on 2016-07-12.
@@ -16,11 +17,10 @@ open class HomeInteractor(val repo: Repo, schedulers: SchedulersWrapper) : BaseI
         return repo.getTodayOutstandingLimit()
     }
 
-    open fun getCategories(onNext: (List<Category>) -> Unit, onError: (Throwable) -> Unit) {
-        Observable.just(repo.getCategories())
-                .subscribeOn(schedulers.ioScheduler)
-                .observeOn(schedulers.uiScheduler)
-                .subscribe(onNext, onError)
+    open fun getCategories(): Observable<List<Category>> {
+        return wrapObservableOperation({ repo.getCategories() })
+
     }
+
 
 }

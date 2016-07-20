@@ -2,6 +2,7 @@ package com.aethernadev.cashkeepakotlin.home
 
 import com.aethernadev.cashkeepakotlin.base.BasePresenter
 import com.aethernadev.cashkeepakotlin.models.Category
+import rx.Subscriber
 import java.math.BigDecimal
 
 /**
@@ -9,15 +10,8 @@ import java.math.BigDecimal
  */
 class HomePresenter(val interactor: HomeInteractor) : BasePresenter<HomeUI>() {
 
-    fun onClickMeh() {
-
-        interactor.getCategories(
-                { categories ->
-                    presentOn({ ui: HomeUI? -> ui?.displaySnackBar(categories) })
-                },
-                { error ->
-                    presentOn { ui: HomeUI? -> ui?.displayError() }
-                })
+    fun onAddExpenseClick() {
+        interactor.getCategories().subscribe(GetCategoriesSubscriber())
     }
 
     fun loadLimit() {
@@ -26,6 +20,18 @@ class HomePresenter(val interactor: HomeInteractor) : BasePresenter<HomeUI>() {
         presentOn(limitWithCurrency)
     }
 
+    open inner class GetCategoriesSubscriber : Subscriber<List<Category>>() {
+        override fun onNext(categories: List<Category>) {
+            presentOn({ ui: HomeUI? -> ui?.displaySnackBar(categories) })
+        }
+
+        override fun onCompleted() {
+        }
+
+        override fun onError(e: Throwable?) {
+            presentOn { ui: HomeUI? -> ui?.displayError() }
+        }
+    }
 }
 
 interface HomeUI {
