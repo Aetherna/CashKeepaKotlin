@@ -35,7 +35,7 @@ class HomePresenterTest {
         homePresenter.onAddExpenseClick()
 
         //then
-        verify<HomeUI>(mockUi).displaySnackBar(categories)
+        verify<HomeUI>(mockUi).displayAddExpenseDialog(categories)
     }
 
     @Test

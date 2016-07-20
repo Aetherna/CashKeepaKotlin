@@ -22,7 +22,7 @@ class HomePresenter(val interactor: HomeInteractor) : BasePresenter<HomeUI>() {
 
     open inner class GetCategoriesSubscriber : Subscriber<List<Category>>() {
         override fun onNext(categories: List<Category>) {
-            presentOn({ ui: HomeUI? -> ui?.displaySnackBar(categories) })
+            presentOn({ ui: HomeUI? -> ui?.displayAddExpenseDialog(categories) })
         }
 
         override fun onCompleted() {
@@ -35,7 +35,7 @@ class HomePresenter(val interactor: HomeInteractor) : BasePresenter<HomeUI>() {
 }
 
 interface HomeUI {
-    fun displaySnackBar(categories: List<Category>)
+    fun displayAddExpenseDialog(categories: List<Category>)
 
     fun displayOutstandingLimit(code: String, amount: BigDecimal)
 

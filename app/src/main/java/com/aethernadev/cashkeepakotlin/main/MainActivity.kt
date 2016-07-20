@@ -10,6 +10,7 @@ import com.aethernadev.cashkeepakotlin.R
 import com.aethernadev.cashkeepakotlin.base.BaseActivity
 import com.aethernadev.cashkeepakotlin.color
 import com.aethernadev.cashkeepakotlin.home.HomeFragment
+import com.aethernadev.cashkeepakotlin.home.addexpense.AddExpenseDialogFragment
 import com.aethernadev.cashkeepakotlin.setup.SetupCategoriesFragment
 import com.aethernadev.cashkeepakotlin.setup.SetupLimitFragment
 import org.jetbrains.anko.*
@@ -77,8 +78,19 @@ class MainActivity : BaseActivity<MainPresenter, MainUI>(), MainUI {
         presenter?.onConfigDone()
     }
 
-    fun showNextSetupStep(){ //todo extract interface for those
+    fun showNextSetupStep() { //todo extract interface for those
         displayFragment(SetupCategoriesFragment())
+    }
+
+    fun displayDialog(dialogFragment: AddExpenseDialogFragment) {
+        val transaction = supportFragmentManager.beginTransaction()
+        val previousDialog = supportFragmentManager.findFragmentByTag("dialog")
+        if (previousDialog != null) {
+            transaction.remove(previousDialog)
+        }
+        transaction.addToBackStack(null)
+        dialogFragment.show(transaction, "dialog")
+
     }
 
 }
