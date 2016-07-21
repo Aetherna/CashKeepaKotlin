@@ -2,8 +2,6 @@ package com.aethernadev.cashkeepakotlin.home.addexpense
 
 import android.content.Context
 import android.os.Bundle
-import android.os.Parcel
-import android.os.Parcelable
 import android.support.v4.app.DialogFragment
 import android.view.LayoutInflater
 import android.view.View
@@ -14,6 +12,8 @@ import android.widget.ImageView
 import android.widget.TextView
 import com.aethernadev.cashkeepakotlin.R
 import com.aethernadev.cashkeepakotlin.models.Category
+import nz.bradcampbell.paperparcel.PaperParcel
+import nz.bradcampbell.paperparcel.PaperParcelable
 import org.jetbrains.anko.find
 import org.jetbrains.anko.imageResource
 import org.jetbrains.anko.layoutInflater
@@ -24,22 +24,20 @@ class AddExpenseDialogFragment : DialogFragment() {
 
     companion object {
         fun newInstance(categories: List<Category>): AddExpenseDialogFragment {
+            val expenseConfig: AddExpenseConfiguration = AddExpenseConfiguration(categories) //todo move it up to the presenter
             val fragment = AddExpenseDialogFragment()
             val bundle = Bundle()
-            bundle.putStringArray("categories", categories.map { it.name }.toTypedArray())
+            bundle.putParcelable("categories", expenseConfig)
             fragment.arguments = bundle
-
             return fragment
         }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val categoriesNames: Array<String>? = savedInstanceState?.getStringArray("categories")
-        if (categoriesNames == null || categoriesNames.isEmpty()) {
-            categories = listOf(Category.FOOD, Category.CLOTHING)
-        } else {
-            categories = categoriesNames.map { Category.valueOf(it) }
+
+        arguments?.let {
+            categories = it.getParcelable<AddExpenseConfiguration>("categories")?.categories
         }
     }
 
@@ -49,24 +47,17 @@ class AddExpenseDialogFragment : DialogFragment() {
         return view
     }
 
-    inner class CategoriesAdapter(context: Context, val data: List<Category>?) : ArrayAdapter<Category>(context, R.layout.setup_category_item) {
-
+    inner class CategoriesAdapter(context: Context, data: List<Category>?) : ArrayAdapter<Category>(context, R.layout.setup_category_item, data) {
 
         override fun getView(position: Int, convertView: View?, parent: ViewGroup?): View {
-            var view = convertView ?: context.layoutInflater.inflate(R.layout.setup_category_item, parent, false) //todo
-            if (data != null) {
-                val resources: Pair<String, Int> = getCategoryResource(data[position])
-                view.find<TextView>(R.id.setup_category_name).text = resources.first
-                view.find<ImageView>(R.id.setup_category_icon).imageResource = resources.second
-            }
+            val view = convertView ?: context.layoutInflater.inflate(R.layout.add_expense_dialog_category, parent, false) //todo view holder
+            val resources: Pair<String, Int> = getCategoryResource(getItem(position))
+            view.find<TextView>(R.id.add_expense_category_name).text = resources.first
+            view.find<ImageView>(R.id.add_expense_category_icon).imageResource = resources.second
+
             return view
         }
-
-        override fun getCount(): Int {
-            return if (data != null) data.size else 0
-        }
     }
-
 }
 
 fun getCategoryResource(category: Category): Pair<String, Int> {
@@ -79,30 +70,15 @@ fun getCategoryResource(category: Category): Pair<String, Int> {
         Category.TRANSPORT -> Pair(category.name, R.drawable.ufo)
     }
 }
-//TODO
-//class Wrapper : Parcelable{
-//    override fun writeToParcel(dest: Parcel?, flags: Int) {
-//        dest?.writeStringList(listOf("a"))
-//    }
-//
-//    override fun describeContents(): Int {
-//        throw UnsupportedOperationException("not implemented") //To change body of created functions use File | Settings | File Templates.
-//    }
-//
-//
-//
-//          val CREATOR: Parcelable.Creator<ScriptureReference> = object : Parcelable.Creator<ScriptureReference> {
-//            override fun createFromParcel(parcelIn: Parcel): ScriptureReference {
-//                return ScriptureReference(parcelIn)
-//            }
-//
-//            override fun newArray(size: Int): Array<ScriptureReference> {
-//                return Array(size, {i -> ScriptureReference()})
-//            }
-//        }
-//
-//
-//}
+
+@PaperParcel
+data class AddExpenseConfiguration(val categories: List<Category>) : PaperParcelable {
+    //todo add currency!
+    companion object {
+        @JvmField val CREATOR = PaperParcelable.Creator(AddExpenseConfiguration::class.java)
+    }
+}
+
 
 
 
