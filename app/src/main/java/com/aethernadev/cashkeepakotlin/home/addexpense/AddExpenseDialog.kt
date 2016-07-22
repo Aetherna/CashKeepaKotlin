@@ -18,7 +18,7 @@ import org.jetbrains.anko.find
 import org.jetbrains.anko.imageResource
 import org.jetbrains.anko.layoutInflater
 
-class AddExpenseDialogFragment : DialogFragment() {
+class AddExpenseDialogFragment() : DialogFragment() {
 
     var categories: List<Category>? = null
 

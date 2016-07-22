@@ -19,4 +19,8 @@ class SetupInteractor(val repo: Repo) {
     fun saveCategories(chosenCategories: List<Category>) {
         repo.saveCategories(chosenCategories)
     }
+
+    fun saveInitialCategories() {
+        repo.saveCategories(Category.values().toList())
+    }
 }

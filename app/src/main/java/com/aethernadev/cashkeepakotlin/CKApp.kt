@@ -10,9 +10,8 @@ import com.aethernadev.cashkeepakotlin.main.MainInteractor
 import com.aethernadev.cashkeepakotlin.main.MainPresenter
 import com.aethernadev.cashkeepakotlin.repo.CashKeepaRepo
 import com.aethernadev.cashkeepakotlin.repo.Repo
-import com.aethernadev.cashkeepakotlin.setup.SetupCategoriesPresenter
 import com.aethernadev.cashkeepakotlin.setup.SetupInteractor
-import com.aethernadev.cashkeepakotlin.setup.SetupLimitPresenter
+import com.aethernadev.cashkeepakotlin.setup.SetupPresenter
 import com.github.salomonbrys.kodein.Kodein
 import com.github.salomonbrys.kodein.android.KodeinApplication
 import com.github.salomonbrys.kodein.singleton
@@ -42,8 +41,8 @@ class CKApp : Application(), KodeinApplication {
         bind<HomePresenter>() with singleton { HomePresenter(instance()) }
 
         bind<SetupInteractor>() with singleton { SetupInteractor(instance()) }
-        bind<SetupLimitPresenter>() with singleton { SetupLimitPresenter(instance()) }
-        bind<SetupCategoriesPresenter>() with singleton { SetupCategoriesPresenter(instance()) }
+        bind<SetupPresenter>() with singleton { SetupPresenter(instance()) }
+//        bind<SetupCategoriesPresenter>() with singleton { SetupCategoriesPresenter(instance()) }
     }
 
     fun initRealm(): Realm {

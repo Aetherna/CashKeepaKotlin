@@ -61,6 +61,8 @@
     </style>
 
     <style name="PrimaryButton" parent="Theme.AppCompat.Light">
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_width">wrap_content</item>
         <item name="colorControlHighlight">@color/lightPrimaryColor</item>
         <item name="colorButtonNormal">@color/colorPrimary</item>
         <item name="android:textColor">@color/toolbarTextColor</item>
@@ -73,6 +75,8 @@
     </style>
 
     <style name="HeaderText">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
         <item name="android:textSize">20sp</item>
         <item name="android:layout_marginBottom">20dp</item>
     </style>

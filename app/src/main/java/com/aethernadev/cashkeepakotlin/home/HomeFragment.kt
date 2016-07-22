@@ -1,7 +1,6 @@
 package com.aethernadev.cashkeepakotlin.home
 
 import android.os.Bundle
-import android.support.design.widget.Snackbar
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -10,7 +9,6 @@ import com.aethernadev.cashkeepakotlin.CKApp
 import com.aethernadev.cashkeepakotlin.R
 import com.aethernadev.cashkeepakotlin.base.BaseFragment
 import com.aethernadev.cashkeepakotlin.home.addexpense.AddExpenseDialogFragment
-import com.aethernadev.cashkeepakotlin.main.MainActivity
 import com.aethernadev.cashkeepakotlin.models.Category
 import com.aethernadev.cashkeepakotlin.snackbar
 import com.aethernadev.cashkeepakotlin.text
@@ -29,6 +27,12 @@ class HomeFragment : BaseFragment<HomePresenter, HomeUI>(), HomeUI {
     val homePresenter: HomePresenter by injector.instance()
     var textView: TextView? = null
 
+    companion object {
+        fun newInstance(): HomeFragment {
+            return HomeFragment()
+        }
+    }
+
     override fun getUI(): HomeUI {
         return this
     }
@@ -38,11 +42,10 @@ class HomeFragment : BaseFragment<HomePresenter, HomeUI>(), HomeUI {
     }
 
     override fun displayAddExpenseDialog(categories: List<Category>) {
-
-        (activity as MainActivity).displayDialog(AddExpenseDialogFragment.newInstance(categories))
-
-//        val categoriesList = categories.map { c -> c.name }.reduce { s1, s2 -> s1 + s2 }
-//        snackbar("Sob sob snackbar : " + categoriesList, Snackbar.LENGTH_LONG)
+        val addExpenseDialog = AddExpenseDialogFragment.newInstance(categories)
+//        addExpenseDialog.setTargetFragment(this, 0)
+//        (activity as MainActivity).displayDialog(addExpenseDialog)
+         displayDialog(addExpenseDialog)
     }
 
     override fun displayError() {
@@ -70,5 +73,17 @@ class HomeFragment : BaseFragment<HomePresenter, HomeUI>(), HomeUI {
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         presenter?.loadLimit()
+    }
+
+
+    fun displayDialog(dialogFragment: AddExpenseDialogFragment) {
+        val transaction = activity.supportFragmentManager.beginTransaction()
+        val previousDialog = activity.supportFragmentManager.findFragmentByTag("dialog")
+        if (previousDialog != null) {
+            transaction.remove(previousDialog)
+        }
+        transaction.addToBackStack(null)
+        dialogFragment.show(transaction, "dialog")
+
     }
 }
