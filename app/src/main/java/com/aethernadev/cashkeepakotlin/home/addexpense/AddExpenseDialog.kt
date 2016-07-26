@@ -2,25 +2,31 @@ package com.aethernadev.cashkeepakotlin.home.addexpense
 
 import android.content.Context
 import android.os.Bundle
+import android.support.design.widget.TextInputLayout
 import android.support.v4.app.DialogFragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ArrayAdapter
-import android.widget.GridView
-import android.widget.ImageView
-import android.widget.TextView
+import android.widget.*
 import com.aethernadev.cashkeepakotlin.R
+import com.aethernadev.cashkeepakotlin.clearErrorOnTextChange
 import com.aethernadev.cashkeepakotlin.models.Category
 import nz.bradcampbell.paperparcel.PaperParcel
 import nz.bradcampbell.paperparcel.PaperParcelable
 import org.jetbrains.anko.find
 import org.jetbrains.anko.imageResource
 import org.jetbrains.anko.layoutInflater
+import org.jetbrains.anko.onClick
+import org.joda.money.CurrencyUnit
+import org.joda.money.Money
+import java.math.BigDecimal
 
 class AddExpenseDialogFragment() : DialogFragment() {
 
     var categories: List<Category>? = null
+    var amountInput: EditText? = null
+    var callback: AddExpenseListener? = null
+    var amountError : TextInputLayout? = null
 
     companion object {
         fun newInstance(categories: List<Category>): AddExpenseDialogFragment {
@@ -35,16 +41,34 @@ class AddExpenseDialogFragment() : DialogFragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
         arguments?.let {
             categories = it.getParcelable<AddExpenseConfiguration>("categories")?.categories
+        }
+        try {
+            callback = activity as AddExpenseListener
+        } catch (exception: ClassCastException) {
+            throw  IllegalStateException("Activity must implement AddExpenseListener")
         }
     }
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view = inflater?.inflate(R.layout.dialog_add_expense, container, false)
         view?.find<GridView>(R.id.add_expense_categories)?.adapter = CategoriesAdapter(context, categories)
+        amountError = view?.find<TextInputLayout>(R.id.add_expense_amount_input_error)
+        amountInput = view?.find<EditText>(R.id.add_expense_amount_input)
+        amountInput?.clearErrorOnTextChange(amountError)
+
         return view
+    }
+
+    fun onCategorySelected(category: Category): Boolean {
+        if (amountInput?.text.isNullOrBlank()) {
+            amountError?.error = "Enter amount"
+            return false
+        }
+        val amount = amountInput?.text.toString().toLong()
+        callback?.onExpenseAdded(ExpenseAddedData(Money.of(CurrencyUnit.USD, BigDecimal.valueOf(amount)), category))
+        return true
     }
 
     inner class CategoriesAdapter(context: Context, data: List<Category>?) : ArrayAdapter<Category>(context, R.layout.setup_category_item, data) {
@@ -54,7 +78,11 @@ class AddExpenseDialogFragment() : DialogFragment() {
             val resources: Pair<String, Int> = getCategoryResource(getItem(position))
             view.find<TextView>(R.id.add_expense_category_name).text = resources.first
             view.find<ImageView>(R.id.add_expense_category_icon).imageResource = resources.second
-
+            view.find<ImageView>(R.id.add_expense_category_icon).onClick {
+                if (onCategorySelected(getItem(position))) {
+                    dismiss()
+                }
+            }
             return view
         }
     }
@@ -77,6 +105,13 @@ data class AddExpenseConfiguration(val categories: List<Category>) : PaperParcel
     companion object {
         @JvmField val CREATOR = PaperParcelable.Creator(AddExpenseConfiguration::class.java)
     }
+}
+
+interface AddExpenseListener {
+    fun onExpenseAdded(expense: ExpenseAddedData)
+}
+
+data class ExpenseAddedData(val amount: Money, val category: Category) {
 }
 
 

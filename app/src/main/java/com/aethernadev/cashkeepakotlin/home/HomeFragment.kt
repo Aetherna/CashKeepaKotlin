@@ -8,6 +8,7 @@ import com.aethernadev.cashkeepakotlin.CKApp
 import com.aethernadev.cashkeepakotlin.R
 import com.aethernadev.cashkeepakotlin.base.BaseFragment
 import com.aethernadev.cashkeepakotlin.home.addexpense.AddExpenseDialogFragment
+import com.aethernadev.cashkeepakotlin.main.MainActivity
 import com.aethernadev.cashkeepakotlin.models.Category
 import com.aethernadev.cashkeepakotlin.snackbar
 import kotlinx.android.synthetic.main.home_fragment.*
@@ -36,9 +37,11 @@ class HomeFragment : BaseFragment<HomePresenter, HomeUI>(), HomeUI {
 
     override fun displayAddExpenseDialog(categories: List<Category>) {
         val addExpenseDialog = AddExpenseDialogFragment.newInstance(categories)
-        addExpenseDialog.setTargetFragment(this@HomeFragment, -1)
-//        (activity as MainActivity).displayDialog(addExpenseDialog)
-        displayDialog(addExpenseDialog)
+//        addExpenseDialog.show(this.childFragmentManager, "dialog_fragment");
+//        addExpenseDialog.setTargetFragment(this@HomeFragment, -1)
+
+        (activity as MainActivity).displayDialog(addExpenseDialog)
+//        displayDialog(addExpenseDialog)
     }
 
     override fun displayError() {
@@ -47,25 +50,14 @@ class HomeFragment : BaseFragment<HomePresenter, HomeUI>(), HomeUI {
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         injector.inject((activity.application as CKApp).kodein)
-        val view = inflater?.inflate(R.layout.home_fragment, container,false)
         presenter = homePresenter
-        return view
+        retainInstance = true
+        return inflater?.inflate(R.layout.home_fragment, container, false)
     }
 
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         presenter?.loadLimit()
         home_add_expense.setOnClickListener { presenter?.onAddExpenseClick() }
-    }
-
-    fun displayDialog(dialogFragment: AddExpenseDialogFragment) {
-        val transaction = activity.supportFragmentManager.beginTransaction()
-        val previousDialog = activity.supportFragmentManager.findFragmentByTag("dialog")
-        if (previousDialog != null) {
-            transaction.remove(previousDialog)
-        }
-        transaction.addToBackStack(null)
-        dialogFragment.show(transaction, "dialog")
-
     }
 }

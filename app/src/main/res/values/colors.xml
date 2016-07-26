@@ -6,4 +6,5 @@
     <color name="toolbarTextColor">#FFFFFF</color>
     <color name="toolbarIconColor">#FFFFFF</color>
     <color name="lightPrimaryColor">#FFECB3</color>
+    <color name="disabledItemOverlayColor">#88FFFFff</color>
 </resources>

@@ -1,6 +1,7 @@
 package com.aethernadev.cashkeepakotlin.main
 
 import android.os.Bundle
+import android.os.PersistableBundle
 import android.support.v4.app.Fragment
 import android.view.Menu
 import android.view.MenuItem
@@ -9,12 +10,15 @@ import com.aethernadev.cashkeepakotlin.R
 import com.aethernadev.cashkeepakotlin.base.BaseActivity
 import com.aethernadev.cashkeepakotlin.home.HomeFragment
 import com.aethernadev.cashkeepakotlin.home.addexpense.AddExpenseDialogFragment
+import com.aethernadev.cashkeepakotlin.home.addexpense.AddExpenseListener
+import com.aethernadev.cashkeepakotlin.home.addexpense.ExpenseAddedData
 import com.aethernadev.cashkeepakotlin.setup.SetupFragment
 import com.aethernadev.cashkeepakotlin.snackbar
 import org.jetbrains.anko.findOptional
+import org.jetbrains.anko.toast
 
 
-class MainActivity : BaseActivity<MainPresenter, MainUI>(), MainUI {
+class MainActivity : BaseActivity<MainPresenter, MainUI>(), MainUI, AddExpenseListener {
 
     val mainPresenter: MainPresenter by injector.instance()
 
@@ -59,6 +63,10 @@ class MainActivity : BaseActivity<MainPresenter, MainUI>(), MainUI {
         presenter?.onConfigDone()
     }
 
+    override fun onExpenseAdded(expense: ExpenseAddedData) {
+        toast(expense.category.name + " " + expense.amount)
+    }
+
     fun displayDialog(dialogFragment: AddExpenseDialogFragment) {
         val transaction = supportFragmentManager.beginTransaction()
         val previousDialog = supportFragmentManager.findFragmentByTag("dialog")
@@ -68,6 +76,15 @@ class MainActivity : BaseActivity<MainPresenter, MainUI>(), MainUI {
         transaction.addToBackStack(null)
         dialogFragment.show(transaction, "dialog")
 
+    }
+
+    override fun onSaveInstanceState(outState: Bundle?, outPersistentState: PersistableBundle?) {
+        super.onSaveInstanceState(outState, outPersistentState)
+
+        val previousDialog = supportFragmentManager.findFragmentByTag("dialog")
+        if (previousDialog != null) {
+            supportFragmentManager.saveFragmentInstanceState(previousDialog)
+        }
     }
 
 }

@@ -4,6 +4,7 @@ package com.aethernadev.cashkeepakotlin
 import android.R
 import android.app.Activity
 import android.support.design.widget.Snackbar
+import android.support.design.widget.TextInputLayout
 import android.support.v4.app.Fragment
 import android.text.Editable
 import android.text.TextWatcher
@@ -61,5 +62,19 @@ fun EditText.textWatcher(beforeTextChanged: (s: CharSequence?, start: Int, count
             afterTextChange(s)
         }
 
+    })
+}
+
+fun EditText.clearErrorOnTextChange(textInputLayout: TextInputLayout?) {
+    this.addTextChangedListener(object : TextWatcher {
+        override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+            textInputLayout?.error = null
+        }
+
+        override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
+        }
+
+        override fun afterTextChanged(s: Editable?) {
+        }
     })
 }
