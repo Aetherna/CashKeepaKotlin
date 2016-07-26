@@ -12,7 +12,7 @@ enum class ExpenseLimitType {
 }
 
 data class Limit(var amount: Money, var type: ExpenseLimitType) {
-    val created: DateTime = DateTime.now()
+    var created: DateTime = DateTime.now()
 }
 
 data class Expense(var created: DateTime, var amount: Money) { //todo add type

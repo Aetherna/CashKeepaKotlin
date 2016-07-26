@@ -2,6 +2,7 @@ package com.aethernadev.cashkeepakotlin.home
 
 import com.aethernadev.cashkeepakotlin.base.SchedulersWrapper
 import com.aethernadev.cashkeepakotlin.models.Category
+import com.aethernadev.cashkeepakotlin.models.Limit
 import com.aethernadev.cashkeepakotlin.repo.Repo
 import com.google.common.truth.Truth.assertThat
 import com.nhaarman.mockito_kotlin.mock
@@ -24,15 +25,16 @@ class HomeInteractorTest {
     val homeInteractor: HomeInteractor = HomeInteractor(repo, schedulers)
 
     @Test
-    fun testGetTodayOutstandingLimit() {
+    fun testNewestLimit() {
         //having
-        whenever(repo.getTodayOutstandingLimit()).thenReturn(TEST_MONI)
+        val testLimit : Limit = mock()
+        whenever(repo.getNewestLimit()).thenReturn(testLimit)
 
         //when
         val result = homeInteractor.getTodayOutstandingLimit()
 
         //then
-        assertThat(result).isEqualTo(TEST_MONI)
+        assertThat(result).isEqualTo(testLimit)
     }
 
     @Test

@@ -5,12 +5,12 @@ import io.realm.RealmObject
 /**
  * Created by Aetherna on 2016-07-14.
  */
-open class Expense : RealmObject() {
+open class ExpenseRealm : RealmObject() {
     open var created: Long? = null
     open var amount: String? = null
 }
 
-open class ExpenseLimit : RealmObject() {
+open class ExpenseLimitRealm : RealmObject() {
 
     open var created: Long? = null
     open var amount: String? = null
@@ -18,6 +18,6 @@ open class ExpenseLimit : RealmObject() {
     open var type: String? = null
 }
 
-open class ExpanseCategory : RealmObject() {
-    open var categoryName: String? = null;
+open class ExpenseCategoryRealm : RealmObject() {
+    open var categoryName: String? = null
 }
