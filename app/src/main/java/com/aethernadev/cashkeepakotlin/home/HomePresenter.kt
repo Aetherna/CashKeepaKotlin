@@ -2,6 +2,8 @@ package com.aethernadev.cashkeepakotlin.home
 
 import com.aethernadev.cashkeepakotlin.base.BasePresenter
 import com.aethernadev.cashkeepakotlin.models.Category
+import com.aethernadev.cashkeepakotlin.models.Expense
+import org.joda.money.Money
 import rx.Subscriber
 import java.math.BigDecimal
 
@@ -12,12 +14,6 @@ class HomePresenter(val interactor: HomeInteractor) : BasePresenter<HomeUI>() {
 
     fun onAddExpenseClick() {
         interactor.getCategories().subscribe(GetCategoriesSubscriber())
-    }
-
-    fun loadLimit() {
-        val outstandingLimit = interactor.getTodayOutstandingLimit()
-        val limitWithCurrency = { ui: HomeUI? -> ui?.displayOutstandingLimit(outstandingLimit.currencyUnit.code, outstandingLimit.amount) }
-        presentOn(limitWithCurrency)
     }
 
     open inner class GetCategoriesSubscriber : Subscriber<List<Category>>() {
@@ -31,6 +27,29 @@ class HomePresenter(val interactor: HomeInteractor) : BasePresenter<HomeUI>() {
         override fun onError(e: Throwable?) {
             presentOn { ui: HomeUI? -> ui?.displayError() }
         }
+    }
+
+    fun loadLimit() {
+        interactor.getTodayOutstandingLimit().subscribe(GetOutstandingLimit())
+    }
+
+    open inner class GetOutstandingLimit : Subscriber<Money>() {
+        override fun onNext(outstandingLimit: Money) {
+            val limitWithCurrency = { ui: HomeUI? -> ui?.displayOutstandingLimit(outstandingLimit.currencyUnit.code, outstandingLimit.amount) }
+            presentOn(limitWithCurrency)
+        }
+
+        override fun onCompleted() {
+        }
+
+        override fun onError(e: Throwable?) {
+            presentOn { ui: HomeUI? -> ui?.displayError() }
+        }
+    }
+
+    fun addExpense(expense: Expense) {
+        interactor.addExpense(expense) //todo async
+        loadLimit()
     }
 }
 

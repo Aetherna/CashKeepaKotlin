@@ -59,8 +59,8 @@ class CashKeepaRepo(val realm: Realm) : Repo {
 
     override fun getExpensesBetween(startDate: DateTime, endDate: DateTime): List<Expense> {
         val expenses = realm.where(ExpenseRealm::class.java)
-                .greaterThan("created", startDate.millis)
-                .lessThan("created", endDate.millis)
+                .lessThan("created", startDate.millis)
+//                .greaterThan("created", endDate.millis) //todo sigh
                 .findAll()
 
         if (expenses.isEmpty()) {

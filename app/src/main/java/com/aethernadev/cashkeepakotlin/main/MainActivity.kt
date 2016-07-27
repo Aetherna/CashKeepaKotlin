@@ -12,6 +12,7 @@ import com.aethernadev.cashkeepakotlin.home.HomeFragment
 import com.aethernadev.cashkeepakotlin.home.addexpense.AddExpenseDialogFragment
 import com.aethernadev.cashkeepakotlin.home.addexpense.AddExpenseListener
 import com.aethernadev.cashkeepakotlin.home.addexpense.ExpenseAddedData
+import com.aethernadev.cashkeepakotlin.models.Expense
 import com.aethernadev.cashkeepakotlin.setup.SetupFragment
 import com.aethernadev.cashkeepakotlin.snackbar
 import org.jetbrains.anko.findOptional
@@ -21,6 +22,7 @@ import org.jetbrains.anko.toast
 class MainActivity : BaseActivity<MainPresenter, MainUI>(), MainUI, AddExpenseListener {
 
     val mainPresenter: MainPresenter by injector.instance()
+    val homeFragment: HomeFragment = HomeFragment.newInstance()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -33,7 +35,7 @@ class MainActivity : BaseActivity<MainPresenter, MainUI>(), MainUI, AddExpenseLi
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.menu_main, menu)
-        return true;
+        return true
     }
 
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
@@ -50,7 +52,7 @@ class MainActivity : BaseActivity<MainPresenter, MainUI>(), MainUI, AddExpenseLi
     }
 
     override fun loadHomeView() {
-        displayFragment(HomeFragment()) //todo lazy inject
+        displayFragment(homeFragment) //todo lazy inject
     }
 
     fun displayFragment(fragment: Fragment) {
@@ -63,8 +65,9 @@ class MainActivity : BaseActivity<MainPresenter, MainUI>(), MainUI, AddExpenseLi
         presenter?.onConfigDone()
     }
 
-    override fun onExpenseAdded(expense: ExpenseAddedData) {
+    override fun onExpenseAdded(expense: ExpenseAddedData) { //todo fix this shit
         toast(expense.category.name + " " + expense.amount)
+        homeFragment.addExpense(Expense(amount = expense.amount))
     }
 
     fun displayDialog(dialogFragment: AddExpenseDialogFragment) {

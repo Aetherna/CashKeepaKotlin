@@ -41,7 +41,7 @@ class HomePresenterTest {
     @Test
     fun should_display_limit_on_load_limit() {
         //having
-        `when`(mockHomeInteractor.getTodayOutstandingLimit()).thenReturn(Money.of(YEN_CURRENCY, AMOUNT_15))
+        `when`(mockHomeInteractor.getTodayOutstandingLimit()).thenReturn(Observable.just(Money.of(YEN_CURRENCY, AMOUNT_15)))
 
         //when
         homePresenter.loadLimit()

@@ -4,6 +4,7 @@ import com.aethernadev.cashkeepakotlin.base.BaseInteractor
 import com.aethernadev.cashkeepakotlin.base.SchedulersWrapper
 import com.aethernadev.cashkeepakotlin.models.Category
 import com.aethernadev.cashkeepakotlin.models.Expense
+import com.aethernadev.cashkeepakotlin.models.Limit
 import com.aethernadev.cashkeepakotlin.repo.Repo
 import org.joda.money.Money
 import org.joda.time.DateTime
@@ -14,23 +15,29 @@ import rx.Observable
  */
 open class HomeInteractor(val repo: Repo, schedulers: SchedulersWrapper) : BaseInteractor(schedulers) {
 
-    open fun getTodayOutstandingLimit(): Money {
+    open fun getTodayOutstandingLimit(): Observable<Money> {
 
-        val limit = repo.getNewestLimit() //todo: handle limit type to end date
-        val expenses: List<Expense> = repo.getExpensesBetween(limit.created, DateTime.now())
+        val newestLimit: Observable<Limit> = wrapAsJustObservable({ repo.getNewestLimit() })
 
-        val outstanding = limit.amount
-        expenses.forEach {
-            outstanding.minus(it.amount)
+        val available = newestLimit.map { limit ->
+            LimitSpendings(limit, repo.getExpensesBetween(limit.created, DateTime.now())).getTotalSpendings()
         }
-
-        return outstanding
+        return available
     }
 
     open fun getCategories(): Observable<List<Category>> {
-        return wrapObservableOperation({ repo.getCategories() })
-
+        return wrapAsJustObservable({ repo.getCategories() })
     }
 
+    inner class LimitSpendings(val limit: Limit, val expenses: List<Expense>) {
+        fun getTotalSpendings(): Money {
+            var available = limit.amount
+            expenses.forEach { expense -> available = available.minus(expense.amount) }
+            return available
+        }
+    }
 
+    fun addExpense(expense: Expense) {
+        repo.saveExpense(expense)
+    }
 }

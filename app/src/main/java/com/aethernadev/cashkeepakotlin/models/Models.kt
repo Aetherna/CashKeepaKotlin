@@ -11,11 +11,11 @@ enum class ExpenseLimitType {
     DAILY, WEEKLY, MONTHLY
 }
 
-data class Limit(var amount: Money, var type: ExpenseLimitType) {
+open class Limit(var amount: Money, var type: ExpenseLimitType) {
     var created: DateTime = DateTime.now()
 }
 
-data class Expense(var created: DateTime, var amount: Money) { //todo add type
+data class Expense(var created: DateTime = DateTime.now(), var amount: Money) { //todo add type
 }
 
 enum class Category {

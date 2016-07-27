@@ -44,6 +44,7 @@ dependencies {
         exclude group: "org.jetbrains.kotlin", module: "kotlin-stdlib"
     }
     testCompile "com.google.truth:truth:0.28"
+    testCompile "joda-time:joda-time:2.9.4"
 
     compile "com.android.support:appcompat-v7:$support_version"
     compile "com.android.support:design:$support_version"
@@ -53,8 +54,6 @@ dependencies {
     compile "org.jetbrains.anko:anko-support-v4:$anko_version"
     // In case you need support-v4 bindings
     compile "org.jetbrains.anko:anko-appcompat-v7:$anko_version" // For appcompat-v7 bindings
-    compile "org.jetbrains.anko:anko-design:$anko_version"
-    compile "org.jetbrains.anko:anko-recyclerview-v7:$anko_version"
 
     compile 'org.joda:joda-money:0.11'
     compile 'net.danlew:android.joda:2.9.4.1'

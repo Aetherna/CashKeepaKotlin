@@ -10,6 +10,7 @@ import com.aethernadev.cashkeepakotlin.base.BaseFragment
 import com.aethernadev.cashkeepakotlin.home.addexpense.AddExpenseDialogFragment
 import com.aethernadev.cashkeepakotlin.main.MainActivity
 import com.aethernadev.cashkeepakotlin.models.Category
+import com.aethernadev.cashkeepakotlin.models.Expense
 import com.aethernadev.cashkeepakotlin.snackbar
 import kotlinx.android.synthetic.main.home_fragment.*
 import java.math.BigDecimal
@@ -37,11 +38,7 @@ class HomeFragment : BaseFragment<HomePresenter, HomeUI>(), HomeUI {
 
     override fun displayAddExpenseDialog(categories: List<Category>) {
         val addExpenseDialog = AddExpenseDialogFragment.newInstance(categories)
-//        addExpenseDialog.show(this.childFragmentManager, "dialog_fragment");
-//        addExpenseDialog.setTargetFragment(this@HomeFragment, -1)
-
         (activity as MainActivity).displayDialog(addExpenseDialog)
-//        displayDialog(addExpenseDialog)
     }
 
     override fun displayError() {
@@ -59,5 +56,9 @@ class HomeFragment : BaseFragment<HomePresenter, HomeUI>(), HomeUI {
         super.onViewCreated(view, savedInstanceState)
         presenter?.loadLimit()
         home_add_expense.setOnClickListener { presenter?.onAddExpenseClick() }
+    }
+
+    fun addExpense(expense: Expense) {
+        presenter?.addExpense(expense)
     }
 }
