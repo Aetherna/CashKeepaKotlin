@@ -22,7 +22,6 @@ import org.jetbrains.anko.toast
 class MainActivity : BaseActivity<MainPresenter, MainUI>(), MainUI, AddExpenseListener {
 
     val mainPresenter: MainPresenter by injector.instance()
-    val homeFragment: HomeFragment = HomeFragment.newInstance()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -30,7 +29,17 @@ class MainActivity : BaseActivity<MainPresenter, MainUI>(), MainUI, AddExpenseLi
         setContentView(R.layout.activity_main)
         setSupportActionBar(findOptional(R.id.toolbar))
         presenter = mainPresenter
-        presenter?.loadView()
+
+        var fragment: Fragment? = null
+        if (savedInstanceState != null) {
+            fragment = supportFragmentManager.findFragmentByTag("fragment")
+        }
+
+        if (fragment != null) {
+            displayFragment(fragment)
+        } else {
+            presenter?.loadView()
+        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -48,16 +57,16 @@ class MainActivity : BaseActivity<MainPresenter, MainUI>(), MainUI, AddExpenseLi
     }
 
     override fun loadSetupView() {
-        displayFragment(SetupFragment())//todo lazy inject
+        displayFragment(SetupFragment())
     }
 
     override fun loadHomeView() {
-        displayFragment(homeFragment) //todo lazy inject
+        displayFragment(HomeFragment.newInstance())
     }
 
     fun displayFragment(fragment: Fragment) {
         val transaction = supportFragmentManager.beginTransaction()
-        transaction?.replace(R.id.content, fragment)
+        transaction?.replace(R.id.content, fragment, "fragment")
         transaction?.commit()
     }
 
@@ -67,7 +76,7 @@ class MainActivity : BaseActivity<MainPresenter, MainUI>(), MainUI, AddExpenseLi
 
     override fun onExpenseAdded(expense: ExpenseAddedData) { //todo fix this shit
         toast(expense.category.name + " " + expense.amount)
-        homeFragment.addExpense(Expense(amount = expense.amount))
+//        homeFragment.addExpense(Expense(amount = expense.amount))
     }
 
     fun displayDialog(dialogFragment: AddExpenseDialogFragment) {
@@ -81,14 +90,14 @@ class MainActivity : BaseActivity<MainPresenter, MainUI>(), MainUI, AddExpenseLi
 
     }
 
-    override fun onSaveInstanceState(outState: Bundle?, outPersistentState: PersistableBundle?) {
-        super.onSaveInstanceState(outState, outPersistentState)
-
-        val previousDialog = supportFragmentManager.findFragmentByTag("dialog")
+    override fun onSaveInstanceState(outState: Bundle?) {
+        super.onSaveInstanceState(outState)
+        val previousDialog = supportFragmentManager.findFragmentByTag("fragment")
         if (previousDialog != null) {
-            supportFragmentManager.saveFragmentInstanceState(previousDialog)
+            supportFragmentManager.putFragment(outState, "fragment", previousDialog)
         }
     }
+
 
 }
 

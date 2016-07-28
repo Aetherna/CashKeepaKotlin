@@ -8,7 +8,8 @@ import com.aethernadev.cashkeepakotlin.CKApp
 import com.aethernadev.cashkeepakotlin.R
 import com.aethernadev.cashkeepakotlin.base.BaseFragment
 import com.aethernadev.cashkeepakotlin.home.addexpense.AddExpenseDialogFragment
-import com.aethernadev.cashkeepakotlin.main.MainActivity
+import com.aethernadev.cashkeepakotlin.home.addexpense.AddExpenseListener
+import com.aethernadev.cashkeepakotlin.home.addexpense.ExpenseAddedData
 import com.aethernadev.cashkeepakotlin.models.Category
 import com.aethernadev.cashkeepakotlin.models.Expense
 import com.aethernadev.cashkeepakotlin.snackbar
@@ -18,7 +19,10 @@ import java.math.BigDecimal
 /**
  * Created by Aetherna on 2016-07-14.
  */
-class HomeFragment : BaseFragment<HomePresenter, HomeUI>(), HomeUI {
+class HomeFragment : BaseFragment<HomePresenter, HomeUI>(), HomeUI, AddExpenseListener {
+    override fun onExpenseAdded(expense: ExpenseAddedData) {
+        throw UnsupportedOperationException("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
 
     val homePresenter: HomePresenter by injector.instance()
 
@@ -38,7 +42,7 @@ class HomeFragment : BaseFragment<HomePresenter, HomeUI>(), HomeUI {
 
     override fun displayAddExpenseDialog(categories: List<Category>) {
         val addExpenseDialog = AddExpenseDialogFragment.newInstance(categories)
-        (activity as MainActivity).displayDialog(addExpenseDialog)
+        displayDialog(addExpenseDialog)
     }
 
     override fun displayError() {
@@ -56,9 +60,38 @@ class HomeFragment : BaseFragment<HomePresenter, HomeUI>(), HomeUI {
         super.onViewCreated(view, savedInstanceState)
         presenter?.loadLimit()
         home_add_expense.setOnClickListener { presenter?.onAddExpenseClick() }
-    }
+
+
+     }
 
     fun addExpense(expense: Expense) {
         presenter?.addExpense(expense)
     }
+
+    fun displayDialog(dialogFragment: AddExpenseDialogFragment) {
+//        val transaction = childFragmentManager.beginTransaction()
+//        val previousDialog = childFragmentManager.findFragmentByTag("dialog")
+//        if (previousDialog != null) {
+//            transaction.remove(previousDialog)
+//        }
+//        dialogFragment.setTargetFragment(this, 0)
+//        transaction.addToBackStack(null)
+//        dialogFragment.show(transaction, "dialog")
+
+        dialogFragment.show(childFragmentManager, "dialog")
+
+    }
+
+    override fun onSaveInstanceState(outState: Bundle?) {
+        super.onSaveInstanceState(outState)
+        val previousDialog = childFragmentManager.findFragmentByTag("dialog")
+        if (previousDialog != null) {
+            childFragmentManager.putFragment(outState,"dialog", previousDialog)
+        }
+
+    }
+
+
+
+
 }
