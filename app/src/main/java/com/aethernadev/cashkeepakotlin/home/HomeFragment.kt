@@ -9,20 +9,16 @@ import com.aethernadev.cashkeepakotlin.R
 import com.aethernadev.cashkeepakotlin.base.BaseFragment
 import com.aethernadev.cashkeepakotlin.home.addexpense.AddExpenseDialogFragment
 import com.aethernadev.cashkeepakotlin.home.addexpense.AddExpenseListener
-import com.aethernadev.cashkeepakotlin.home.addexpense.ExpenseAddedData
 import com.aethernadev.cashkeepakotlin.models.Category
-import com.aethernadev.cashkeepakotlin.models.Expense
 import com.aethernadev.cashkeepakotlin.snackbar
 import kotlinx.android.synthetic.main.home_fragment.*
+import org.jetbrains.anko.support.v4.toast
 import java.math.BigDecimal
 
 /**
  * Created by Aetherna on 2016-07-14.
  */
 class HomeFragment : BaseFragment<HomePresenter, HomeUI>(), HomeUI, AddExpenseListener {
-    override fun onExpenseAdded(expense: ExpenseAddedData) {
-        throw UnsupportedOperationException("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
 
     val homePresenter: HomePresenter by injector.instance()
 
@@ -60,38 +56,16 @@ class HomeFragment : BaseFragment<HomePresenter, HomeUI>(), HomeUI, AddExpenseLi
         super.onViewCreated(view, savedInstanceState)
         presenter?.loadLimit()
         home_add_expense.setOnClickListener { presenter?.onAddExpenseClick() }
-
-
-     }
-
-    fun addExpense(expense: Expense) {
-        presenter?.addExpense(expense)
     }
+
 
     fun displayDialog(dialogFragment: AddExpenseDialogFragment) {
-//        val transaction = childFragmentManager.beginTransaction()
-//        val previousDialog = childFragmentManager.findFragmentByTag("dialog")
-//        if (previousDialog != null) {
-//            transaction.remove(previousDialog)
-//        }
-//        dialogFragment.setTargetFragment(this, 0)
-//        transaction.addToBackStack(null)
-//        dialogFragment.show(transaction, "dialog")
-
-        dialogFragment.show(childFragmentManager, "dialog")
-
+        dialogFragment.setTargetFragment(this, 0)
+        dialogFragment.show(activity.supportFragmentManager, "dialog")
     }
 
-    override fun onSaveInstanceState(outState: Bundle?) {
-        super.onSaveInstanceState(outState)
-        val previousDialog = childFragmentManager.findFragmentByTag("dialog")
-        if (previousDialog != null) {
-            childFragmentManager.putFragment(outState,"dialog", previousDialog)
-        }
-
+    override fun onExpenseAdded(amount: String, category: Category) {
+        toast(amount + "" + category.name)
+        presenter?.addExpense(amount, category)
     }
-
-
-
-
 }

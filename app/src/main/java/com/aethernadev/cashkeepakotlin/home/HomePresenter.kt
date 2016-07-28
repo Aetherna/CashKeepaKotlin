@@ -3,6 +3,7 @@ package com.aethernadev.cashkeepakotlin.home
 import com.aethernadev.cashkeepakotlin.base.BasePresenter
 import com.aethernadev.cashkeepakotlin.models.Category
 import com.aethernadev.cashkeepakotlin.models.Expense
+import org.joda.money.CurrencyUnit
 import org.joda.money.Money
 import rx.Subscriber
 import java.math.BigDecimal
@@ -47,7 +48,9 @@ class HomePresenter(val interactor: HomeInteractor) : BasePresenter<HomeUI>() {
         }
     }
 
-    fun addExpense(expense: Expense) {
+    fun addExpense(amount: String, category: Category) {
+        //todo create expense properly
+        val expense = Expense(amount = Money.of(CurrencyUnit.USD, BigDecimal.valueOf(amount.toLong())))
         interactor.addExpense(expense) //todo async
         loadLimit()
     }

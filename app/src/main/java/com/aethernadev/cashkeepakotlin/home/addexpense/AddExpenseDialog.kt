@@ -1,15 +1,15 @@
 package com.aethernadev.cashkeepakotlin.home.addexpense
 
-import android.app.AlertDialog
-import android.app.Dialog
 import android.content.Context
 import android.os.Bundle
 import android.support.design.widget.TextInputLayout
 import android.support.v4.app.DialogFragment
+import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
 import com.aethernadev.cashkeepakotlin.R
+import com.aethernadev.cashkeepakotlin.clearErrorOnTextChange
 import com.aethernadev.cashkeepakotlin.models.Category
 import nz.bradcampbell.paperparcel.PaperParcel
 import nz.bradcampbell.paperparcel.PaperParcelable
@@ -17,15 +17,11 @@ import org.jetbrains.anko.find
 import org.jetbrains.anko.imageResource
 import org.jetbrains.anko.layoutInflater
 import org.jetbrains.anko.onClick
-import org.joda.money.CurrencyUnit
-import org.joda.money.Money
-import java.math.BigDecimal
 
 class AddExpenseDialogFragment() : DialogFragment() {
 
     var categories: List<Category>? = null
     var amountInput: EditText? = null
-    var callback: AddExpenseListener? = null
     var amountError: TextInputLayout? = null
 
     companion object {
@@ -44,40 +40,25 @@ class AddExpenseDialogFragment() : DialogFragment() {
         arguments?.let {
             categories = it.getParcelable<AddExpenseConfiguration>("categories")?.categories
         }
-//        callback = targetFragment as AddExpenseListener
-
     }
 
-
-    override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-
-        val view = activity.layoutInflater?.inflate(R.layout.dialog_add_expense, null, false)
+    override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        val view = inflater?.inflate(R.layout.dialog_add_expense, container, false)
         view?.find<GridView>(R.id.add_expense_categories)?.adapter = CategoriesAdapter(context, categories)
+        amountError = view?.find<TextInputLayout>(R.id.add_expense_amount_input_error)
+        amountInput = view?.find<EditText>(R.id.add_expense_amount_input)
+        amountInput?.clearErrorOnTextChange(amountError)
 
-        return AlertDialog.Builder(activity)
-                .setTitle("title")
-//                            .setView(view)
-                .create()
+        return view
     }
-
-//
-//    override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-//        val view = inflater?.inflate(R.layout.dialog_add_expense, container, false)
-//        view?.find<GridView>(R.id.add_expense_categories)?.adapter = CategoriesAdapter(context, categories)
-//        amountError = view?.find<TextInputLayout>(R.id.add_expense_amount_input_error)
-//        amountInput = view?.find<EditText>(R.id.add_expense_amount_input)
-//        amountInput?.clearErrorOnTextChange(amountError)
-//
-//        return view
-//    }
 
     fun onCategorySelected(category: Category): Boolean {
         if (amountInput?.text.isNullOrBlank()) {
-            amountError?.error = "Enter amount"
+            amountError?.error = "Enter amount" //todo
             return false
         }
-        val amount = amountInput?.text.toString().toLong()
-        callback?.onExpenseAdded(ExpenseAddedData(Money.of(CurrencyUnit.USD, BigDecimal.valueOf(amount)), category))
+        val amount = amountInput?.text.toString()
+        (targetFragment as AddExpenseListener).onExpenseAdded(amount, category)
         return true
     }
 
@@ -118,12 +99,5 @@ data class AddExpenseConfiguration(val categories: List<Category>) : PaperParcel
 }
 
 interface AddExpenseListener {
-    fun onExpenseAdded(expense: ExpenseAddedData)
+    fun onExpenseAdded(amount: String, category: Category)
 }
-
-data class ExpenseAddedData(val amount: Money, val category: Category) {
-}
-
-
-
-

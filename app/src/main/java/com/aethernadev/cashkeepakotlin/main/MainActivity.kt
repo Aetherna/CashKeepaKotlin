@@ -1,7 +1,6 @@
 package com.aethernadev.cashkeepakotlin.main
 
 import android.os.Bundle
-import android.os.PersistableBundle
 import android.support.v4.app.Fragment
 import android.view.Menu
 import android.view.MenuItem
@@ -9,17 +8,12 @@ import com.aethernadev.cashkeepakotlin.CKApp
 import com.aethernadev.cashkeepakotlin.R
 import com.aethernadev.cashkeepakotlin.base.BaseActivity
 import com.aethernadev.cashkeepakotlin.home.HomeFragment
-import com.aethernadev.cashkeepakotlin.home.addexpense.AddExpenseDialogFragment
-import com.aethernadev.cashkeepakotlin.home.addexpense.AddExpenseListener
-import com.aethernadev.cashkeepakotlin.home.addexpense.ExpenseAddedData
-import com.aethernadev.cashkeepakotlin.models.Expense
 import com.aethernadev.cashkeepakotlin.setup.SetupFragment
 import com.aethernadev.cashkeepakotlin.snackbar
 import org.jetbrains.anko.findOptional
-import org.jetbrains.anko.toast
 
 
-class MainActivity : BaseActivity<MainPresenter, MainUI>(), MainUI, AddExpenseListener {
+class MainActivity : BaseActivity<MainPresenter, MainUI>(), MainUI {
 
     val mainPresenter: MainPresenter by injector.instance()
 
@@ -74,22 +68,6 @@ class MainActivity : BaseActivity<MainPresenter, MainUI>(), MainUI, AddExpenseLi
         presenter?.onConfigDone()
     }
 
-    override fun onExpenseAdded(expense: ExpenseAddedData) { //todo fix this shit
-        toast(expense.category.name + " " + expense.amount)
-//        homeFragment.addExpense(Expense(amount = expense.amount))
-    }
-
-    fun displayDialog(dialogFragment: AddExpenseDialogFragment) {
-        val transaction = supportFragmentManager.beginTransaction()
-        val previousDialog = supportFragmentManager.findFragmentByTag("dialog")
-        if (previousDialog != null) {
-            transaction.remove(previousDialog)
-        }
-        transaction.addToBackStack(null)
-        dialogFragment.show(transaction, "dialog")
-
-    }
-
     override fun onSaveInstanceState(outState: Bundle?) {
         super.onSaveInstanceState(outState)
         val previousDialog = supportFragmentManager.findFragmentByTag("fragment")
@@ -97,8 +75,6 @@ class MainActivity : BaseActivity<MainPresenter, MainUI>(), MainUI, AddExpenseLi
             supportFragmentManager.putFragment(outState, "fragment", previousDialog)
         }
     }
-
-
 }
 
 
