@@ -14,20 +14,18 @@ import java.math.BigDecimal
 class HomePresenter(val interactor: HomeInteractor) : BasePresenter<HomeUI>() {
 
     fun onAddExpenseClick() {
-        interactor.getCategories().subscribe(GetCategoriesSubscriber())
-    }
+        interactor.getCategories().subscribe(object : Subscriber<List<Category>>() {
+            override fun onNext(categories: List<Category>) {
+                presentOn({ ui: HomeUI? -> ui?.displayAddExpenseDialog(categories) })
+            }
 
-    open inner class GetCategoriesSubscriber : Subscriber<List<Category>>() {
-        override fun onNext(categories: List<Category>) {
-            presentOn({ ui: HomeUI? -> ui?.displayAddExpenseDialog(categories) })
-        }
+            override fun onCompleted() {
+            }
 
-        override fun onCompleted() {
-        }
-
-        override fun onError(e: Throwable?) {
-            presentOn { ui: HomeUI? -> ui?.displayError() }
-        }
+            override fun onError(e: Throwable?) {
+                presentOn { ui: HomeUI? -> ui?.displayError() }
+            }
+        })
     }
 
     fun loadLimit() {
@@ -49,10 +47,20 @@ class HomePresenter(val interactor: HomeInteractor) : BasePresenter<HomeUI>() {
     }
 
     fun addExpense(amount: String, category: Category) {
-        //todo create expense properly
+        //todo create expense / category properly
         val expense = Expense(amount = Money.of(CurrencyUnit.USD, BigDecimal.valueOf(amount.toLong())))
-        interactor.addExpense(expense) //todo async
-        loadLimit()
+        interactor.addExpense(expense).subscribe(object : Subscriber<Unit>() {
+            override fun onNext(t: Unit?) {
+            }
+
+            override fun onCompleted() {
+                loadLimit()
+            }
+
+            override fun onError(e: Throwable?) {
+                presentOn { ui: HomeUI? -> ui?.displayError() }
+            }
+        })
     }
 }
 

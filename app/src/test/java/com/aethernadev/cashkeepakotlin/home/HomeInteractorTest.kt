@@ -63,4 +63,17 @@ class HomeInteractorTest {
         testSubscriber.assertReceivedOnNext(mutableListOf(listOf(Category.FOOD, Category.CLOTHING)))
 
     }
+
+    @Test
+    fun testAddExpense(){
+        //having
+        val testSubscriber: TestSubscriber<Unit> = TestSubscriber()
+
+        //when
+        homeInteractor.addExpense(TEST_EXPENSE).subscribe(testSubscriber)
+
+        //then
+        testSubscriber.assertNoErrors()
+        testSubscriber.assertCompleted()
+    }
 }
