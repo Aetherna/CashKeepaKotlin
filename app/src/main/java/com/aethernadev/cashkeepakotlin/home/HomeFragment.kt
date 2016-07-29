@@ -61,7 +61,7 @@ class HomeFragment : BaseFragment<HomePresenter, HomeUI>(), HomeUI, AddExpenseLi
 
     fun displayDialog(dialogFragment: AddExpenseDialogFragment) {
         dialogFragment.setTargetFragment(this, 0)
-        dialogFragment.show(activity.supportFragmentManager, "dialog")
+        dialogFragment.show(fragmentManager, "dialog")
     }
 
     override fun onExpenseAdded(amount: String, category: Category) {
