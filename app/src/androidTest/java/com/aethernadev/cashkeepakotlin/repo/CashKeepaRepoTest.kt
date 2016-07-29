@@ -32,6 +32,7 @@ class CashKeepaRepoTest : TestCase() {
     val TEST_MONEY_1: Money = Money.of(CurrencyUnit.EUR, BigDecimal.TEN)
     val TEST_MONEY_2: Money = Money.of(CurrencyUnit.USD, BigDecimal.ONE)
     val TEST_MONEY_3: Money = Money.of(CurrencyUnit.JPY, BigDecimal.valueOf(15))
+    val TEST_MONEY_4: Money = Money.of(CurrencyUnit.CAD, BigDecimal.valueOf(7))
 
 
     @Rule @JvmField
@@ -103,10 +104,10 @@ class CashKeepaRepoTest : TestCase() {
         val startDate = date(2006, 6, 6)
         val endDate = date(2006, 10, 10)
         //and expenses made after and before it
-        val expense1 = Expense(date(2006, 6, 7), TEST_MONEY_1)
+        val expense1 = Expense(date(2006, 6, 8), TEST_MONEY_1)
         val expense2 = Expense(date(2006, 6, 8), TEST_MONEY_2)
         val earlierExpense = Expense(date(2006, 3, 7), TEST_MONEY_3)
-        val laterExpense = Expense(date(2006, 12, 12), TEST_MONEY_3)
+        val laterExpense = Expense(date(2006, 12, 12), TEST_MONEY_4)
 
         repo?.saveExpense(earlierExpense)
         repo?.saveExpense(expense1)
