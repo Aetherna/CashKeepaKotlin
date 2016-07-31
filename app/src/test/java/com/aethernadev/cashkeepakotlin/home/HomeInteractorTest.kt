@@ -26,7 +26,7 @@ class HomeInteractorTest {
 
     val TEST_MONI = Money.of(CurrencyUnit.USD, BigDecimal.valueOf(200))
     val TEST_LIMIT_MONI = Money.of(CurrencyUnit.USD, BigDecimal.valueOf(1000))
-    val TEST_EXPENSE = Expense(DateTime.now(), TEST_MONI)
+    val TEST_EXPENSE = Expense(DateTime.now(), TEST_MONI, Category.CLOTHING)
     val repo: Repo = mock()
     val schedulers: SchedulersWrapper = SchedulersWrapper(ioScheduler = Schedulers.immediate(), uiScheduler = Schedulers.immediate())
     val homeInteractor: HomeInteractor = HomeInteractor(repo, schedulers)
@@ -35,7 +35,7 @@ class HomeInteractorTest {
     @Test
     fun testNewestLimit() {
         //having
-        val testLimit: Limit = Limit(TEST_LIMIT_MONI, ExpenseLimitType.DAILY)
+        val testLimit: Limit = Limit(amount = TEST_LIMIT_MONI, type = ExpenseLimitType.DAILY)
         val expenses = listOf(TEST_EXPENSE, TEST_EXPENSE)
 
         whenever(repo.getNewestLimit()).thenReturn(testLimit)

@@ -33,8 +33,9 @@ fun mapLimitFromRealm(expenseLimitRealm: ExpenseLimitRealm?): Limit {
         throw RuntimeException("Limit can not be null")
     }
 
+    val created: DateTime = DateTime(expenseLimitRealm.created)
     val amount: Money = Money.of(CurrencyUnit.of(expenseLimitRealm.currency), BigDecimal.valueOf(expenseLimitRealm.amount!!.toLong()))
-    return Limit(amount, ExpenseLimitType.valueOf(expenseLimitRealm.type!!))
+    return Limit(created, amount, ExpenseLimitType.valueOf(expenseLimitRealm.type!!))
 }
 
 fun mapCategoryToRealm(realm: Realm, category: Category): ExpenseCategoryRealm? {
@@ -46,15 +47,17 @@ fun mapCategoryToRealm(realm: Realm, category: Category): ExpenseCategoryRealm? 
 fun mapExpenseFromRealm(expenseRealm: ExpenseRealm): Expense {
 
     val created = DateTime(expenseRealm.created)
-    val amount = Money.parse(expenseRealm.amount)
+    val amount = Money.ofMinor(CurrencyUnit.of(expenseRealm.currencyCode), expenseRealm.amountMinor!!)
+    val category = Category.valueOf(expenseRealm.expenseCategory!!)
 
-    return Expense(created, amount)
-
+    return Expense(created, amount, category)
 }
 
 fun mapExpenseToRealm(realm: Realm, expense: Expense): ExpenseRealm? {
     val expenseRealm: ExpenseRealm? = realm.createObject(ExpenseRealm::class.java)
-    expenseRealm?.amount = expense.amount.toString()
+    expenseRealm?.amountMinor = expense.amount.amountMinorLong
+    expenseRealm?.currencyCode = expense.amount.currencyUnit.currencyCode
     expenseRealm?.created = expense.created.millis
+    expenseRealm?.expenseCategory = expense.category.name
     return expenseRealm
 }

@@ -7,7 +7,9 @@ import io.realm.RealmObject
  */
 open class ExpenseRealm : RealmObject() {
     open var created: Long? = null
-    open var amount: String? = null
+    open var amountMinor: Long? = null
+    open var currencyCode: String? = null
+    open var expenseCategory: String? = null
 }
 
 open class ExpenseLimitRealm : RealmObject() {

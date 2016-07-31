@@ -13,7 +13,7 @@ import org.joda.money.Money
 class SetupInteractor(val repo: Repo) {
 
     fun saveLimit(amount: Money, limitType: ExpenseLimitType) {
-        repo.saveLimit(Limit(amount, limitType))
+        repo.saveLimit(Limit(amount = amount,type =  limitType))
     }
 
     fun saveCategories(chosenCategories: List<Category>) {

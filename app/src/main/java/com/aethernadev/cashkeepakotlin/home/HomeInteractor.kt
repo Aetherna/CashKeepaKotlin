@@ -39,6 +39,5 @@ open class HomeInteractor(val repo: Repo, schedulers: SchedulersWrapper) : BaseI
 
     fun addExpense(expense: Expense): Observable<Unit> {
         return wrapAsJustObservable<Unit> { repo.saveExpense(expense) }
-//        repo.reposaveExpense(expense)
     }
 }

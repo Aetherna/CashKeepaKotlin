@@ -75,6 +75,4 @@ class CashKeepaRepo(val realm: Realm) : Repo {
             mapExpenseToRealm(realm, expense)
         }
     }
-
-
 }

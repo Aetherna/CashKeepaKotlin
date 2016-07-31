@@ -52,7 +52,7 @@ class CashKeepaRepoTest : TestCase() {
         //when
         assertThat(realm?.where(ExpenseLimitRealm::class.java)?.count()).isEqualTo(0L)
 
-        repo?.saveLimit(Limit(TEST_MONEY_1, ExpenseLimitType.DAILY))
+        repo?.saveLimit(Limit(amount = TEST_MONEY_1, type = ExpenseLimitType.DAILY))
         //then
         assertThat(realm?.where(ExpenseLimitRealm::class.java)?.count()).isEqualTo(1L)
     }
@@ -60,9 +60,9 @@ class CashKeepaRepoTest : TestCase() {
     @Test
     fun testGetNewestLimit() {
         //having
-        repo?.saveLimit(Limit(TEST_MONEY_1, ExpenseLimitType.DAILY))
-        repo?.saveLimit(Limit(TEST_MONEY_2, ExpenseLimitType.MONTHLY))
-        repo?.saveLimit(Limit(TEST_MONEY_3, ExpenseLimitType.WEEKLY))
+        repo?.saveLimit(Limit(amount = TEST_MONEY_1, type = ExpenseLimitType.DAILY))
+        repo?.saveLimit(Limit(amount = TEST_MONEY_2, type = ExpenseLimitType.MONTHLY))
+        repo?.saveLimit(Limit(amount = TEST_MONEY_3, type = ExpenseLimitType.WEEKLY))
 
         //when
         val limit = repo?.getNewestLimit()
@@ -104,10 +104,10 @@ class CashKeepaRepoTest : TestCase() {
         val startDate = date(2006, 6, 6)
         val endDate = date(2006, 10, 10)
         //and expenses made after and before it
-        val expense1 = Expense(date(2006, 6, 8), TEST_MONEY_1)
-        val expense2 = Expense(date(2006, 6, 8), TEST_MONEY_2)
-        val earlierExpense = Expense(date(2006, 3, 7), TEST_MONEY_3)
-        val laterExpense = Expense(date(2006, 12, 12), TEST_MONEY_4)
+        val expense1 = Expense(date(2006, 6, 8), TEST_MONEY_1, Category.CLOTHING)
+        val expense2 = Expense(date(2006, 6, 8), TEST_MONEY_2, Category.CLOTHING)
+        val earlierExpense = Expense(date(2006, 3, 7), TEST_MONEY_3, Category.CLOTHING)
+        val laterExpense = Expense(date(2006, 12, 12), TEST_MONEY_4, Category.CLOTHING)
 
         repo?.saveExpense(earlierExpense)
         repo?.saveExpense(expense1)
@@ -128,9 +128,9 @@ class CashKeepaRepoTest : TestCase() {
         //when
         assertThat(realm?.where(ExpenseRealm::class.java)?.count()).isEqualTo(0L)
 
-        repo?.saveExpense(Expense(date(2006, 6, 7), TEST_MONEY_1))
-        repo?.saveExpense(Expense(date(2006, 6, 4), TEST_MONEY_3))
-        repo?.saveExpense(Expense(date(2006, 6, 2), TEST_MONEY_2))
+        repo?.saveExpense(Expense(date(2006, 6, 7), TEST_MONEY_1, Category.CLOTHING))
+        repo?.saveExpense(Expense(date(2006, 6, 4), TEST_MONEY_3, Category.CLOTHING))
+        repo?.saveExpense(Expense(date(2006, 6, 2), TEST_MONEY_2, Category.CLOTHING))
         //then
         assertThat(realm?.where(ExpenseRealm::class.java)?.count()).isEqualTo(3L)
     }
@@ -140,7 +140,7 @@ class CashKeepaRepoTest : TestCase() {
     }
 
     fun createLimit(created: DateTime, money: Money, type: ExpenseLimitType) {
-        val testLimit = Limit(money, type)
+        val testLimit = Limit(amount = money, type = type)
         testLimit.created = created
     }
 }
