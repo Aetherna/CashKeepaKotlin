@@ -30,23 +30,23 @@ open class HomeInteractor(val repo: Repo, schedulers: SchedulersWrapper) : BaseI
         return wrapAsJustObservable({ repo.getCategories() })
     }
 
-    inner class LimitSpendings(val limit: Limit, val expenses: List<Expense>) {
-        fun getTotalSpendings(): Money {
-            var available = limit.amount
-            expenses.forEach { expense -> available = available.minus(expense.amount) }
-            return available
-        }
-    }
-
     fun addExpense(expense: Expense): Observable<Unit> {
         return wrapAsJustObservable<Unit> { repo.saveExpense(expense) }
+    }
+}
+
+open class LimitSpendings(val limit: Limit, val expenses: List<Expense>) {
+    fun getTotalSpendings(): Money {
+        var available = limit.amount
+        expenses.forEach { expense -> available = available.minus(expense.amount) }
+        return available
     }
 }
 
 fun limitDates(limit: Limit, now: DateTime): Pair<DateTime, DateTime> {
     val dates: Pair<DateTime, DateTime> =
             when (limit.type) {
-                ExpenseLimitType.DAILY -> Pair(DateTime.now().withTimeAtStartOfDay(), now)
+                ExpenseLimitType.DAILY -> Pair(now.withTimeAtStartOfDay(), now)
                 ExpenseLimitType.WEEKLY -> Pair(getWeekLimitStart(limit.created, now), now)
                 ExpenseLimitType.MONTHLY -> Pair(getMonthLimitStart(limit.created, now), now)
             }
@@ -54,21 +54,20 @@ fun limitDates(limit: Limit, now: DateTime): Pair<DateTime, DateTime> {
 }
 
 fun getWeekLimitStart(limitStart: DateTime, now: DateTime): DateTime {
-    return now.dayOfWeek().setCopy(limitStart.dayOfWeek)
+    return now.dayOfWeek().setCopy(limitStart.dayOfWeek).withTimeAtStartOfDay()
 }
 
 fun getMonthLimitStart(limitStart: DateTime, now: DateTime): DateTime {
 
     //set the day as beginning
     if (now.dayOfMonth > limitStart.dayOfMonth) {
-        return now.dayOfMonth().setCopy(limitStart.dayOfMonth)
+        return now.dayOfMonth().setCopy(limitStart.dayOfMonth).withTimeAtStartOfDay()
     }
 
     val previousMonth = now.minusMonths(1)
     if (limitStart.dayOfMonth > previousMonth.dayOfMonth().maximumValue) {
-        return now.dayOfMonth().setCopy(1) //start limit from 1 available day
+        return now.dayOfMonth().setCopy(1).withTimeAtStartOfDay() //start limit from 1 available day
     }
 
-    return previousMonth.dayOfMonth().setCopy(limitStart.dayOfMonth)
-
+    return previousMonth.dayOfMonth().setCopy(limitStart.dayOfMonth).withTimeAtStartOfDay()
 }

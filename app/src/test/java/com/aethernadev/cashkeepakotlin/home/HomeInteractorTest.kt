@@ -79,4 +79,109 @@ class HomeInteractorTest {
         testSubscriber.assertNoErrors()
         testSubscriber.assertCompleted()
     }
+
+    @Test
+    fun testLimitDatesDaily() {
+
+        //having
+        val now = DateTime(2016, 6, 6, 12, 30)
+        val limit = getLimit(2016, 4, 4, ExpenseLimitType.DAILY)
+
+        //when
+        val limitPeriod = limitDates(limit, now)
+
+        //then
+        assertThat(limitPeriod.first).isEqualTo(now.withTimeAtStartOfDay())
+        assertThat(limitPeriod.second).isEqualTo(now)
+    }
+
+    @Test
+    fun testLimitDatesWeekly() {
+
+        //having now is  2016/6/7 -> Tuesday
+        val now = DateTime(2016, 6, 7, 12, 30)
+        //limit was setup as starting in 2016/4/4 on Monday
+        val limit = getLimit(2016, 4, 4, ExpenseLimitType.WEEKLY)
+
+        //when
+        val limitPeriod = limitDates(limit, now)
+
+        //then assert this accounting period starts from monday
+        assertThat(limitPeriod.first).isEqualTo(DateTime(2016, 6, 6, 0, 0))
+        assertThat(limitPeriod.second).isEqualTo(now)
+    }
+
+    @Test
+    fun testLimitDatesMonthDayAfterLimit() {
+
+        //having now dayOfMonth is after limit dayOfMonth
+        val now = DateTime(2016, 6, 10, 12, 30)
+        //limit
+        val limit = getLimit(2016, 4, 4, ExpenseLimitType.MONTHLY)
+
+        //when
+        val limitPeriod = limitDates(limit, now)
+
+        //then assert our accounting period starts this month at 4th
+        assertThat(limitPeriod.first).isEqualTo(DateTime(2016, 6, 4, 0, 0))
+        assertThat(limitPeriod.second).isEqualTo(now)
+    }
+
+    @Test
+    fun testLimitDatesMonthDayFebruary() {
+
+        //having now as march
+        val now = DateTime(2016, 3, 2, 12, 30)
+        //asn limit set on 31th of January
+        val limit = getLimit(2016, 1, 31, ExpenseLimitType.MONTHLY)
+
+        //when
+        val limitPeriod = limitDates(limit, now)
+
+        //then we assert our counting period  NOT as 31 february (doh) but 1st march
+        assertThat(limitPeriod.first).isEqualTo(DateTime(2016, 3, 1, 0, 0))
+        assertThat(limitPeriod.second).isEqualTo(now)
+    }
+
+    @Test
+    fun testLimitDatesMonthGoBack() {
+
+        //having now as march
+        val now = DateTime(2016, 3, 15, 12, 30)
+        //asn limit set on dayOfMonth later then dayOfMonth now
+        val limit = getLimit(2016, 1, 20, ExpenseLimitType.MONTHLY)
+
+        //when
+        val limitPeriod = limitDates(limit, now)
+
+        //then we start accounting period from feb 20
+        assertThat(limitPeriod.first).isEqualTo(DateTime(2016, 2, 20, 0, 0))
+        assertThat(limitPeriod.second).isEqualTo(now)
+    }
+
+    fun getLimit(year: Int, month: Int, day: Int, type: ExpenseLimitType): Limit {
+        val start = DateTime(year, month, day, 10, 20)
+        return Limit(start, Money.of(CurrencyUnit.USD, BigDecimal.TEN), type)
+    }
+
+    fun getLimit(amount: Int): Limit {
+        val start = DateTime(2016, 6, 6, 10, 20)
+        return Limit(start, Money.of(CurrencyUnit.USD, BigDecimal.valueOf(amount.toDouble())), ExpenseLimitType.DAILY)
+    }
+
+
+    @Test
+    fun testTotalSpendings() {
+        //having
+        val limit = getLimit(100)
+        val expenses: List<Expense> = listOf(getExpense(5.75), getExpense(6.toDouble()), getExpense(2.toDouble()))
+
+        //when
+        val outstanding = LimitSpendings(limit, expenses).getTotalSpendings()
+        assertThat(outstanding.amount).isEqualTo(BigDecimal.valueOf("86.25".toDouble()))
+    }
+
+    fun getExpense(amount: Double): Expense {
+        return Expense(amount = Money.of(CurrencyUnit.USD, BigDecimal.valueOf(amount)), category = Category.CLOTHING)
+    }
 }
