@@ -4,6 +4,7 @@ import com.aethernadev.cashkeepakotlin.base.BaseInteractor
 import com.aethernadev.cashkeepakotlin.base.SchedulersWrapper
 import com.aethernadev.cashkeepakotlin.models.Category
 import com.aethernadev.cashkeepakotlin.models.Expense
+import com.aethernadev.cashkeepakotlin.models.ExpenseLimitType
 import com.aethernadev.cashkeepakotlin.models.Limit
 import com.aethernadev.cashkeepakotlin.repo.Repo
 import org.joda.money.Money
@@ -20,7 +21,7 @@ open class HomeInteractor(val repo: Repo, schedulers: SchedulersWrapper) : BaseI
         val newestLimit: Observable<Limit> = wrapAsJustObservable({ repo.getNewestLimit() })
 
         val available = newestLimit.map { limit ->
-            LimitSpendings(limit, repo.getExpensesBetween(limit.created, DateTime.now())).getTotalSpendings()
+            LimitSpendings(limit, repo.getExpensesBetween(limitDates(limit, DateTime.now()).first, DateTime.now())).getTotalSpendings()
         }
         return available
     }
@@ -40,4 +41,34 @@ open class HomeInteractor(val repo: Repo, schedulers: SchedulersWrapper) : BaseI
     fun addExpense(expense: Expense): Observable<Unit> {
         return wrapAsJustObservable<Unit> { repo.saveExpense(expense) }
     }
+}
+
+fun limitDates(limit: Limit, now: DateTime): Pair<DateTime, DateTime> {
+    val dates: Pair<DateTime, DateTime> =
+            when (limit.type) {
+                ExpenseLimitType.DAILY -> Pair(DateTime.now().withTimeAtStartOfDay(), now)
+                ExpenseLimitType.WEEKLY -> Pair(getWeekLimitStart(limit.created, now), now)
+                ExpenseLimitType.MONTHLY -> Pair(getMonthLimitStart(limit.created, now), now)
+            }
+    return dates
+}
+
+fun getWeekLimitStart(limitStart: DateTime, now: DateTime): DateTime {
+    return now.dayOfWeek().setCopy(limitStart.dayOfWeek)
+}
+
+fun getMonthLimitStart(limitStart: DateTime, now: DateTime): DateTime {
+
+    //set the day as beginning
+    if (now.dayOfMonth > limitStart.dayOfMonth) {
+        return now.dayOfMonth().setCopy(limitStart.dayOfMonth)
+    }
+
+    val previousMonth = now.minusMonths(1)
+    if (limitStart.dayOfMonth > previousMonth.dayOfMonth().maximumValue) {
+        return now.dayOfMonth().setCopy(1) //start limit from 1 available day
+    }
+
+    return previousMonth.dayOfMonth().setCopy(limitStart.dayOfMonth)
+
 }
