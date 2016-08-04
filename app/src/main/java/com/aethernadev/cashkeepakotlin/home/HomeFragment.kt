@@ -56,6 +56,7 @@ class HomeFragment : BaseFragment<HomePresenter, HomeUI>(), HomeUI, AddExpenseLi
         super.onViewCreated(view, savedInstanceState)
         presenter?.loadLimit()
         home_add_expense.setOnClickListener { presenter?.onAddExpenseClick() }
+        home_refresh.setOnClickListener { presenter?.loadLimit() }
     }
 
 

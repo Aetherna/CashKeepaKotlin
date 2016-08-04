@@ -48,7 +48,7 @@ class HomePresenter(val interactor: HomeInteractor) : BasePresenter<HomeUI>() {
 
     fun addExpense(amount: String, category: Category) {
         //todo handle currency
-        val expense = Expense(amount = Money.of(CurrencyUnit.USD, BigDecimal.valueOf(amount.toLong())), category = category)
+        val expense = Expense(amount = Money.of(CurrencyUnit.getInstance("PLN"), BigDecimal.valueOf(amount.toLong())), category = category)
         interactor.addExpense(expense).subscribe(object : Subscriber<Unit>() {
             override fun onNext(t: Unit?) {
             }

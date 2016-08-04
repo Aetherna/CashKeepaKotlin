@@ -20,8 +20,8 @@ import java.math.BigDecimal
 fun mapExpenseLimitToRealm(realm: Realm, expenseLimit: Limit): ExpenseLimitRealm? {
     val realmLimitRealm: ExpenseLimitRealm? = realm.createObject(ExpenseLimitRealm::class.java)
     realmLimitRealm?.created = expenseLimit.created.millis
-    realmLimitRealm?.amount = expenseLimit.amount.amount.toLong().toString()
-    realmLimitRealm?.currency = expenseLimit.amount.currencyUnit.currencyCode
+    realmLimitRealm?.amountMinor = expenseLimit.amount.amountMinorLong
+    realmLimitRealm?.currencyCode = expenseLimit.amount.currencyUnit.currencyCode
     realmLimitRealm?.type = expenseLimit.type.name
     return realmLimitRealm
 
@@ -33,8 +33,8 @@ fun mapLimitFromRealm(expenseLimitRealm: ExpenseLimitRealm?): Limit {
         throw RuntimeException("Limit can not be null")
     }
 
-    val created: DateTime = DateTime(expenseLimitRealm.created)
-    val amount: Money = Money.of(CurrencyUnit.of(expenseLimitRealm.currency), BigDecimal.valueOf(expenseLimitRealm.amount!!.toLong()))
+    val created = DateTime(expenseLimitRealm.created)
+    val amount = Money.ofMinor(CurrencyUnit.of(expenseLimitRealm.currencyCode), expenseLimitRealm.amountMinor!!)
     return Limit(created, amount, ExpenseLimitType.valueOf(expenseLimitRealm.type!!))
 }
 

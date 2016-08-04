@@ -15,8 +15,8 @@ open class ExpenseRealm : RealmObject() {
 open class ExpenseLimitRealm : RealmObject() {
 
     open var created: Long? = null
-    open var amount: String? = null
-    open var currency: String? = null
+    open var amountMinor: Long? = null
+    open var currencyCode: String? = null
     open var type: String? = null
 }
 
