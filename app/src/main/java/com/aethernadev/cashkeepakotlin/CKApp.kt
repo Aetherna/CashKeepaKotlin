@@ -10,6 +10,7 @@ import com.aethernadev.cashkeepakotlin.main.MainInteractor
 import com.aethernadev.cashkeepakotlin.main.MainPresenter
 import com.aethernadev.cashkeepakotlin.repo.CashKeepaRepo
 import com.aethernadev.cashkeepakotlin.repo.Repo
+import com.aethernadev.cashkeepakotlin.settings.SettingsInteractor
 import com.aethernadev.cashkeepakotlin.setup.SetupInteractor
 import com.aethernadev.cashkeepakotlin.setup.SetupPresenter
 import com.github.salomonbrys.kodein.Kodein
@@ -34,11 +35,13 @@ class CKApp : Application(), KodeinApplication {
         bind<Repo>() with singleton { CashKeepaRepo(instance()) }
         bind<SchedulersWrapper>() with singleton { SchedulersWrapper(Schedulers.computation(), AndroidSchedulers.mainThread()) }
 
+        bind<SettingsInteractor>() with singleton { SettingsInteractor(instance(), instance()) }
+
         bind<MainInteractor>() with singleton { MainInteractor(getAppSharedPrefsFile()) }
         bind<MainPresenter>() with singleton { MainPresenter(instance()) }
 
         bind<HomeInteractor>() with singleton { HomeInteractor(instance(), instance()) }
-        bind<HomePresenter>() with singleton { HomePresenter(instance()) }
+        bind<HomePresenter>() with singleton { HomePresenter(instance(), instance()) }
 
         bind<SetupInteractor>() with singleton { SetupInteractor(instance()) }
         bind<SetupPresenter>() with singleton { SetupPresenter(instance()) }

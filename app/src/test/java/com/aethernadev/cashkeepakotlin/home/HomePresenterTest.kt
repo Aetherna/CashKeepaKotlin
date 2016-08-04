@@ -1,6 +1,8 @@
 package com.aethernadev.cashkeepakotlin.home
 
 import com.aethernadev.cashkeepakotlin.models.Category
+import com.aethernadev.cashkeepakotlin.settings.AppSettings
+import com.aethernadev.cashkeepakotlin.settings.SettingsInteractor
 import com.nhaarman.mockito_kotlin.mock
 import org.joda.money.CurrencyUnit
 import org.joda.money.Money
@@ -18,7 +20,8 @@ class HomePresenterTest {
 
     internal var mockHomeInteractor: HomeInteractor = mock()
     internal var mockUi: HomeUI = mock()
-    internal var homePresenter: HomePresenter = HomePresenter(mockHomeInteractor)
+    internal var mockSettingsInteractor: SettingsInteractor = mock()
+    internal var homePresenter: HomePresenter = HomePresenter(mockHomeInteractor, mockSettingsInteractor)
 
     @Before
     fun setup() {
@@ -28,26 +31,29 @@ class HomePresenterTest {
     @Test
     fun should_display_toast_on_click() {
 
+        //having
         val categories: List<Category> = mock()
+        val currency: CurrencyUnit = CurrencyUnit.AUD
         `when`(mockHomeInteractor.getCategories()).thenReturn(Observable.just(categories))
+        homePresenter.settings = AppSettings(currency)
 
         //when
         homePresenter.onAddExpenseClick()
 
         //then
-        verify<HomeUI>(mockUi).displayAddExpenseDialog(categories)
+        verify<HomeUI>(mockUi).displayAddExpenseDialog(categories, currency)
     }
 
     @Test
     fun should_display_limit_on_load_limit() {
         //having
         `when`(mockHomeInteractor.getTodayOutstandingLimit()).thenReturn(Observable.just(Money.of(YEN_CURRENCY, AMOUNT_15)))
-
+        `when`(mockSettingsInteractor.getSettings()).thenReturn(Observable.just(null))
         //when
         homePresenter.loadLimit()
 
         //then
-        verify<HomeUI>(mockUi).displayOutstandingLimit(YEN_CURRENCY.code, AMOUNT_15)
+        verify<HomeUI>(mockUi).displayOutstandingLimit(YEN_CURRENCY.currencyCode, AMOUNT_15)
     }
 
     companion object {

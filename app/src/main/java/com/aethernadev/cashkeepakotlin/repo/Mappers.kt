@@ -7,11 +7,12 @@ import com.aethernadev.cashkeepakotlin.models.Limit
 import com.aethernadev.cashkeepakotlin.repo.dbmodels.ExpenseCategoryRealm
 import com.aethernadev.cashkeepakotlin.repo.dbmodels.ExpenseLimitRealm
 import com.aethernadev.cashkeepakotlin.repo.dbmodels.ExpenseRealm
+import com.aethernadev.cashkeepakotlin.settings.AppSettings
+import com.aethernadev.cashkeepakotlin.settings.Settings
 import io.realm.Realm
 import org.joda.money.CurrencyUnit
 import org.joda.money.Money
 import org.joda.time.DateTime
-import java.math.BigDecimal
 
 /**
  * Created by Aetherna on 2016-07-18.
@@ -60,4 +61,8 @@ fun mapExpenseToRealm(realm: Realm, expense: Expense): ExpenseRealm? {
     expenseRealm?.created = expense.created.millis
     expenseRealm?.expenseCategory = expense.category.name
     return expenseRealm
+}
+
+fun mapAppSettingsFrom(expenseLimitRealm: ExpenseLimitRealm): Settings {
+    return AppSettings(CurrencyUnit.of(expenseLimitRealm.currencyCode))
 }

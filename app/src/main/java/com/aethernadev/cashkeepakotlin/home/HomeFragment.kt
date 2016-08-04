@@ -13,6 +13,7 @@ import com.aethernadev.cashkeepakotlin.models.Category
 import com.aethernadev.cashkeepakotlin.snackbar
 import kotlinx.android.synthetic.main.home_fragment.*
 import org.jetbrains.anko.support.v4.toast
+import org.joda.money.CurrencyUnit
 import java.math.BigDecimal
 
 /**
@@ -36,7 +37,7 @@ class HomeFragment : BaseFragment<HomePresenter, HomeUI>(), HomeUI, AddExpenseLi
         home_limit.text = amount.toPlainString() + " " + code
     }
 
-    override fun displayAddExpenseDialog(categories: List<Category>) {
+    override fun displayAddExpenseDialog(categories: List<Category>, currencyUnit: CurrencyUnit) {
         val addExpenseDialog = AddExpenseDialogFragment.newInstance(categories)
         displayDialog(addExpenseDialog)
     }
