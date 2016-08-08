@@ -33,8 +33,8 @@ class HomeFragment : BaseFragment<HomePresenter, HomeUI>(), HomeUI, AddExpenseLi
         return this
     }
 
-    override fun displayOutstandingLimit(code: String, amount: BigDecimal) {
-        home_limit.text = amount.toPlainString() + " " + code
+    override fun displayAvailableAndSpent(available: BigDecimal, code: String, spent: BigDecimal) {
+        home_limit.text = available.toPlainString() + " / " + spent.toPlainString() + " " + code
     }
 
     override fun displayAddExpenseDialog(categories: List<Category>, currencyUnit: CurrencyUnit) {

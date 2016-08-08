@@ -41,14 +41,14 @@ class HomeInteractorTest {
         whenever(repo.getNewestLimit()).thenReturn(testLimit)
         whenever(repo.getExpensesBetween(anyObject(), anyObject())).thenReturn(expenses)
 
-        val testSubscriber: TestSubscriber<Money> = TestSubscriber()
+        val testSubscriber: TestSubscriber<LimitSpendings> = TestSubscriber()
 
         //when
         val result = homeInteractor.getTodayOutstandingLimit().subscribe(testSubscriber)
 
         //then
         testSubscriber.assertNoErrors()
-        testSubscriber.assertReceivedOnNext(mutableListOf(TEST_MONI))
+        testSubscriber.assertReceivedOnNext(mutableListOf(LimitSpendings(testLimit,expenses)))
         assertThat(result).isEqualTo(testLimit)
     }
 
@@ -177,7 +177,7 @@ class HomeInteractorTest {
         val expenses: List<Expense> = listOf(getExpense(5.75), getExpense(6.toDouble()), getExpense(2.toDouble()))
 
         //when
-        val outstanding = LimitSpendings(limit, expenses).getTotalSpendings()
+        val outstanding = LimitSpendings(limit, expenses).available
         assertThat(outstanding.amount).isEqualTo(BigDecimal.valueOf("86.25".toDouble()))
     }
 

@@ -16,14 +16,13 @@ import rx.Observable
  */
 open class HomeInteractor(val repo: Repo, schedulers: SchedulersWrapper) : BaseInteractor(schedulers) {
 
-    open fun getTodayOutstandingLimit(): Observable<Money> {
+    open fun getTodayOutstandingLimit(): Observable<LimitSpendings> {
 
         val newestLimit: Observable<Limit> = wrapAsJustObservable({ repo.getNewestLimit() })
 
-        val available = newestLimit.map { limit ->
-            LimitSpendings(limit, repo.getExpensesBetween(limitDates(limit, DateTime.now()).first, DateTime.now())).getTotalSpendings()
+        return newestLimit.map { limit ->
+            LimitSpendings(limit, repo.getExpensesBetween(limitDates(limit, DateTime.now()).first, DateTime.now()))
         }
-        return available
     }
 
     open fun getCategories(): Observable<List<Category>> {
@@ -35,11 +34,16 @@ open class HomeInteractor(val repo: Repo, schedulers: SchedulersWrapper) : BaseI
     }
 }
 
-open class LimitSpendings(val limit: Limit, val expenses: List<Expense>) {
-    fun getTotalSpendings(): Money {
-        var available = limit.amount
-        expenses.forEach { expense -> available = available.minus(expense.amount) }
-        return available
+open class LimitSpendings(val limit: Limit, expenses: List<Expense>) {
+
+    var available: Money = Money.ofMinor(limit.amount.currencyUnit, 0)
+    var spent: Money = Money.ofMinor(limit.amount.currencyUnit, 0)
+
+    init {
+        expenses.forEach { expense ->
+            spent = spent.plus(expense.amount)
+        }
+        available = limit.amount.minus(spent)
     }
 }
 

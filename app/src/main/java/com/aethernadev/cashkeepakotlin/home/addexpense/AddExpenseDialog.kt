@@ -54,7 +54,7 @@ class AddExpenseDialogFragment() : DialogFragment() {
 
     fun onCategorySelected(category: Category): Boolean {
         if (amountInput?.text.isNullOrBlank()) {
-            amountError?.error = "Enter amount" //todo
+            amountError?.error = "Enter spent" //todo
             return false
         }
         val amount = amountInput?.text.toString()

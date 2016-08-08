@@ -1,6 +1,9 @@
 package com.aethernadev.cashkeepakotlin.home
 
 import com.aethernadev.cashkeepakotlin.models.Category
+import com.aethernadev.cashkeepakotlin.models.Expense
+import com.aethernadev.cashkeepakotlin.models.ExpenseLimitType
+import com.aethernadev.cashkeepakotlin.models.Limit
 import com.aethernadev.cashkeepakotlin.settings.AppSettings
 import com.aethernadev.cashkeepakotlin.settings.SettingsInteractor
 import com.nhaarman.mockito_kotlin.mock
@@ -47,18 +50,39 @@ class HomePresenterTest {
     @Test
     fun should_display_limit_on_load_limit() {
         //having
-        `when`(mockHomeInteractor.getTodayOutstandingLimit()).thenReturn(Observable.just(Money.of(YEN_CURRENCY, AMOUNT_15)))
+        val testSpendings = LimitSpendings(TEST_LIMIT_100, listOf(TEST_EXPENSE_15))
+        `when`(mockHomeInteractor.getTodayOutstandingLimit()).thenReturn(Observable.just(testSpendings))
         `when`(mockSettingsInteractor.getSettings()).thenReturn(Observable.just(null))
         //when
         homePresenter.loadLimit()
 
         //then
-        verify<HomeUI>(mockUi).displayOutstandingLimit(YEN_CURRENCY.currencyCode, AMOUNT_15)
+        verify<HomeUI>(mockUi).displayAvailableAndSpent(AMOUNT_85,YEN_CURRENCY.currencyCode, AMOUNT_15)
     }
+
+//    @Test //TODO settings is a dependency. |Shouldn't be done via interactor ?
+//    fun should_add_expense(){
+//
+//        //having
+//        val amount = "23.45"
+//        val category = Category.CLOTHING
+//        `when`(mockSettingsInteractor.getSettings()).thenReturn(Observable.just(null))
+//
+//        //when
+//        homePresenter.addExpense(amount, category)
+//
+//        //then
+//        verify(mockHomeInteractor).addExpense(Expense(amount = Money.of()))
+//    }
 
     companion object {
 
         private val YEN_CURRENCY = CurrencyUnit.JPY
         private val AMOUNT_15 = BigDecimal.valueOf(15)
+        private val AMOUNT_85 = BigDecimal.valueOf(85)
+        private val LIMIT_100 = BigDecimal.valueOf(100)
+        private val TEST_EXPENSE_15 = Expense(amount = Money.of(YEN_CURRENCY, AMOUNT_15), category = Category.CLOTHING)
+        private val TEST_LIMIT_100 = Limit(amount = Money.of(YEN_CURRENCY, LIMIT_100), type = ExpenseLimitType.DAILY)
+
     }
 }

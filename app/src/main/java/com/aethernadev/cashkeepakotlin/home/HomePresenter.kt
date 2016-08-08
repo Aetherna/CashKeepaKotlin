@@ -1,6 +1,7 @@
 package com.aethernadev.cashkeepakotlin.home
 
 import com.aethernadev.cashkeepakotlin.base.BasePresenter
+import com.aethernadev.cashkeepakotlin.currencyCode
 import com.aethernadev.cashkeepakotlin.models.Category
 import com.aethernadev.cashkeepakotlin.models.Expense
 import com.aethernadev.cashkeepakotlin.settings.Settings
@@ -33,20 +34,6 @@ class HomePresenter(val interactor: HomeInteractor, val settingsInteractor: Sett
     }
 
     fun loadLimit() {
-        interactor.getTodayOutstandingLimit().subscribe(object : Subscriber<Money>() {
-            override fun onNext(outstandingLimit: Money) {
-                val limitWithCurrency = { ui: HomeUI? -> ui?.displayOutstandingLimit(outstandingLimit.currencyUnit.code, outstandingLimit.amount) }
-                presentOn(limitWithCurrency)
-            }
-
-            override fun onCompleted() {
-            }
-
-            override fun onError(e: Throwable?) {
-                presentOn { ui: HomeUI? -> ui?.displayError() } //todo critical error "exit the app"
-            }
-        })
-
         settingsInteractor.getSettings().subscribe(object : Subscriber<Settings>() {
             override fun onCompleted() {
             }
@@ -58,14 +45,29 @@ class HomePresenter(val interactor: HomeInteractor, val settingsInteractor: Sett
             override fun onError(e: Throwable?) {
                 ui?.displayError()
             }
+        })
 
+        interactor.getTodayOutstandingLimit().subscribe(object : Subscriber<LimitSpendings>() {
+            override fun onNext(limitAndSpendings: LimitSpendings) {
+                val available = limitAndSpendings.available
+                val spent = limitAndSpendings.spent
+                val limitWithCurrency = { ui: HomeUI? -> ui?.displayAvailableAndSpent(available.amount, available.currencyCode(), spent.amount) }
+                presentOn(limitWithCurrency)
+            }
+
+            override fun onCompleted() {
+            }
+
+            override fun onError(e: Throwable?) {
+                presentOn { ui: HomeUI? -> ui?.displayError() } //todo critical error "exit the app"
+            }
         })
     }
 
 
     fun addExpense(amount: String, category: Category) {
         //todo handle currency
-        val expense = Expense(amount = Money.of(settings!!.getCurrency(), BigDecimal.valueOf(amount.toLong())), category = category)
+        val expense = Expense(amount = Money.of(settings!!.getCurrency(), BigDecimal.valueOf(amount.toDouble())), category = category)
         interactor.addExpense(expense).subscribe(object : Subscriber<Unit>() {
             override fun onNext(t: Unit?) {
             }
@@ -84,7 +86,7 @@ class HomePresenter(val interactor: HomeInteractor, val settingsInteractor: Sett
 interface HomeUI {
     fun displayAddExpenseDialog(categories: List<Category>, currencyUnit: CurrencyUnit)
 
-    fun displayOutstandingLimit(code: String, amount: BigDecimal)
+    fun displayAvailableAndSpent(available: BigDecimal, code: String, spent: BigDecimal)
 
     fun displayError()
 }
