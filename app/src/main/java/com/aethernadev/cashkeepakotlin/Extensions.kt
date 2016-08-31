@@ -11,7 +11,6 @@ import android.text.TextWatcher
 import android.view.View
 import android.widget.EditText
 import org.jetbrains.anko.find
-import org.joda.money.Money
 
 
 fun View.snackbar(text: CharSequence, duration: Int = Snackbar.LENGTH_SHORT, init: Snackbar.() -> Unit = {}): Snackbar {
@@ -77,6 +76,3 @@ fun EditText.clearErrorOnTextChange(textInputLayout: TextInputLayout?) {
     })
 }
 
-fun Money.currencyCode(): String {
-    return currencyUnit.code
-}

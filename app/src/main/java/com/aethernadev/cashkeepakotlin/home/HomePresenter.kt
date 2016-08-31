@@ -1,27 +1,25 @@
 package com.aethernadev.cashkeepakotlin.home
 
 import com.aethernadev.cashkeepakotlin.base.BasePresenter
+import com.aethernadev.cashkeepakotlin.config.AppConfig
 import com.aethernadev.cashkeepakotlin.currencyCode
 import com.aethernadev.cashkeepakotlin.models.Category
 import com.aethernadev.cashkeepakotlin.models.Expense
-import com.aethernadev.cashkeepakotlin.settings.Settings
-import com.aethernadev.cashkeepakotlin.settings.SettingsInteractor
+import com.aethernadev.cashkeepakotlin.moneyFrom
 import org.joda.money.CurrencyUnit
-import org.joda.money.Money
 import rx.Subscriber
 import java.math.BigDecimal
 
 /**
  * Created by Aetherna on 2016-07-11.
  */
-class HomePresenter(val interactor: HomeInteractor, val settingsInteractor: SettingsInteractor) : BasePresenter<HomeUI>() {
+class HomePresenter(val interactor: HomeInteractor, val appConfig: AppConfig) : BasePresenter<HomeUI>() {
 
-    var settings: Settings? = null
 
     fun onAddExpenseClick() {
         interactor.getCategories().subscribe(object : Subscriber<List<Category>>() {
             override fun onNext(categories: List<Category>) {
-                presentOn({ ui: HomeUI? -> ui?.displayAddExpenseDialog(categories, settings!!.getCurrency()) })
+                presentOn({ ui: HomeUI? -> ui?.displayAddExpenseDialog(categories, appConfig.getCurrency()) })
             }
 
             override fun onCompleted() {
@@ -34,18 +32,6 @@ class HomePresenter(val interactor: HomeInteractor, val settingsInteractor: Sett
     }
 
     fun loadLimit() {
-        settingsInteractor.getSettings().subscribe(object : Subscriber<Settings>() {
-            override fun onCompleted() {
-            }
-
-            override fun onNext(settings: Settings?) {
-                this@HomePresenter.settings = settings
-            }
-
-            override fun onError(e: Throwable?) {
-                ui?.displayError()
-            }
-        })
 
         interactor.getTodayOutstandingLimit().subscribe(object : Subscriber<LimitSpendings>() {
             override fun onNext(limitAndSpendings: LimitSpendings) {
@@ -67,7 +53,7 @@ class HomePresenter(val interactor: HomeInteractor, val settingsInteractor: Sett
 
     fun addExpense(amount: String, category: Category) {
         //todo handle currency
-        val expense = Expense(amount = Money.of(settings!!.getCurrency(), BigDecimal.valueOf(amount.toDouble())), category = category)
+        val expense = Expense(amount = moneyFrom(appConfig, amount), category = category)
         interactor.addExpense(expense).subscribe(object : Subscriber<Unit>() {
             override fun onNext(t: Unit?) {
             }

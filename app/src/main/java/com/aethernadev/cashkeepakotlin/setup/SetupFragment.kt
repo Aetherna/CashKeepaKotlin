@@ -6,17 +6,13 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.RadioButton
-import com.aethernadev.cashkeepakotlin.CKApp
-import com.aethernadev.cashkeepakotlin.R
+import com.aethernadev.cashkeepakotlin.*
 import com.aethernadev.cashkeepakotlin.base.BaseFragment
 import com.aethernadev.cashkeepakotlin.main.MainActivity
 import com.aethernadev.cashkeepakotlin.models.ExpenseLimitType
-import com.aethernadev.cashkeepakotlin.text
-import com.aethernadev.cashkeepakotlin.textWatcher
 import kotlinx.android.synthetic.main.setup_fragment.*
 import org.joda.money.CurrencyUnit
 import org.joda.money.Money
-import java.math.BigDecimal
 
 /**
  * Created by Aetherna on 2016-07-16.
@@ -85,7 +81,7 @@ class SetupFragment : BaseFragment<SetupPresenter, SetupUI>(), SetupUI {
         val selectedCurrency: CurrencyUnit = setup_limit_currency.selectedItem as CurrencyUnit
         val selectedAmount: String = setup_limit_amount.text.toString()
 
-        return Money.of(selectedCurrency, BigDecimal.valueOf(selectedAmount.toLong()))
+        return moneyFrom(selectedCurrency, selectedAmount)
     }
 
     fun getSupportedCurrencies(): List<CurrencyUnit> {

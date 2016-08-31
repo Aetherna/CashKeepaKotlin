@@ -6,9 +6,9 @@ import com.aethernadev.cashkeepakotlin.models.Limit
 import com.aethernadev.cashkeepakotlin.repo.dbmodels.ExpenseCategoryRealm
 import com.aethernadev.cashkeepakotlin.repo.dbmodels.ExpenseLimitRealm
 import com.aethernadev.cashkeepakotlin.repo.dbmodels.ExpenseRealm
-import com.aethernadev.cashkeepakotlin.settings.Settings
 import io.realm.Realm
 import io.realm.Sort
+import org.joda.money.CurrencyUnit
 import org.joda.time.DateTime
 
 /**
@@ -28,12 +28,12 @@ interface Repo {
 
     fun saveExpense(expense: Expense)
 
-    fun getAppCurrency(): Settings
+    fun getAppCurrency(): CurrencyUnit
 }
 
 class CashKeepaRepo(val realm: Realm) : Repo {
 
-    override fun getAppCurrency(): Settings {
+    override fun getAppCurrency(): CurrencyUnit {
         val result = realm.where(ExpenseLimitRealm::class.java).findAllSorted("created", Sort.DESCENDING).first()
         return mapAppSettingsFrom(result)
     }

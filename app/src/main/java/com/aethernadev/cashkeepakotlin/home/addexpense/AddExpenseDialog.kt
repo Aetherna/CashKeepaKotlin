@@ -17,19 +17,21 @@ import org.jetbrains.anko.find
 import org.jetbrains.anko.imageResource
 import org.jetbrains.anko.layoutInflater
 import org.jetbrains.anko.onClick
+import org.joda.money.CurrencyUnit
 
 class AddExpenseDialogFragment() : DialogFragment() {
 
-    var categories: List<Category>? = null
+    var dialogConfiguration: AddExpenseConfiguration? = null
     var amountInput: EditText? = null
     var amountError: TextInputLayout? = null
+    var amountCurrency: TextView? = null
 
     companion object {
-        fun newInstance(categories: List<Category>): AddExpenseDialogFragment {
-            val expenseConfig: AddExpenseConfiguration = AddExpenseConfiguration(categories) //todo move it up to the presenter
+        fun newInstance(categories: List<Category>, currencyUnit: CurrencyUnit): AddExpenseDialogFragment {
+            val expenseConfig: AddExpenseConfiguration = AddExpenseConfiguration(categories, currencyUnit) //todo move it up to the presenter
             val fragment = AddExpenseDialogFragment()
             val bundle = Bundle()
-            bundle.putParcelable("categories", expenseConfig)
+            bundle.putParcelable("config", expenseConfig)
             fragment.arguments = bundle
             return fragment
         }
@@ -38,16 +40,18 @@ class AddExpenseDialogFragment() : DialogFragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
-            categories = it.getParcelable<AddExpenseConfiguration>("categories")?.categories
+            dialogConfiguration = it.getParcelable<AddExpenseConfiguration>("config")
         }
     }
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view = inflater?.inflate(R.layout.dialog_add_expense, container, false)
-        view?.find<GridView>(R.id.add_expense_categories)?.adapter = CategoriesAdapter(context, categories)
+        view?.find<GridView>(R.id.add_expense_categories)?.adapter = CategoriesAdapter(context, dialogConfiguration?.categories)
         amountError = view?.find<TextInputLayout>(R.id.add_expense_amount_input_error)
         amountInput = view?.find<EditText>(R.id.add_expense_amount_input)
         amountInput?.clearErrorOnTextChange(amountError)
+        amountCurrency = view?.find<TextView>(R.id.add_expense_amount_currency)
+        amountCurrency?.text = dialogConfiguration?.currencyUnit?.currencyCode
 
         return view
     }
@@ -91,8 +95,7 @@ fun getCategoryResource(category: Category): Pair<String, Int> {
 }
 
 @PaperParcel
-data class AddExpenseConfiguration(val categories: List<Category>) : PaperParcelable {
-    //todo add currency!
+data class AddExpenseConfiguration(val categories: List<Category>, val currencyUnit: CurrencyUnit) : PaperParcelable {
     companion object {
         @JvmField val CREATOR = PaperParcelable.Creator(AddExpenseConfiguration::class.java)
     }

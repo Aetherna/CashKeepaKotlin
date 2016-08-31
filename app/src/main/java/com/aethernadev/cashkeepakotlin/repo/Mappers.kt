@@ -7,8 +7,6 @@ import com.aethernadev.cashkeepakotlin.models.Limit
 import com.aethernadev.cashkeepakotlin.repo.dbmodels.ExpenseCategoryRealm
 import com.aethernadev.cashkeepakotlin.repo.dbmodels.ExpenseLimitRealm
 import com.aethernadev.cashkeepakotlin.repo.dbmodels.ExpenseRealm
-import com.aethernadev.cashkeepakotlin.settings.AppSettings
-import com.aethernadev.cashkeepakotlin.settings.Settings
 import io.realm.Realm
 import org.joda.money.CurrencyUnit
 import org.joda.money.Money
@@ -63,6 +61,6 @@ fun mapExpenseToRealm(realm: Realm, expense: Expense): ExpenseRealm? {
     return expenseRealm
 }
 
-fun mapAppSettingsFrom(expenseLimitRealm: ExpenseLimitRealm): Settings {
-    return AppSettings(CurrencyUnit.of(expenseLimitRealm.currencyCode))
+fun mapAppSettingsFrom(expenseLimitRealm: ExpenseLimitRealm): CurrencyUnit {
+    return CurrencyUnit.of(expenseLimitRealm.currencyCode)
 }

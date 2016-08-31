@@ -38,7 +38,7 @@ class HomeFragment : BaseFragment<HomePresenter, HomeUI>(), HomeUI, AddExpenseLi
     }
 
     override fun displayAddExpenseDialog(categories: List<Category>, currencyUnit: CurrencyUnit) {
-        val addExpenseDialog = AddExpenseDialogFragment.newInstance(categories)
+        val addExpenseDialog = AddExpenseDialogFragment.newInstance(categories, currencyUnit)
         displayDialog(addExpenseDialog)
     }
 
