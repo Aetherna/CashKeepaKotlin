@@ -1,7 +1,7 @@
 package com.aethernadev.cashkeepakotlin.home
 
 import com.aethernadev.cashkeepakotlin.config.AppConfig
-import com.aethernadev.cashkeepakotlin.config.CurrencyConfig
+import com.aethernadev.cashkeepakotlin.config.ConfigInteractor
 import com.aethernadev.cashkeepakotlin.models.Category
 import com.aethernadev.cashkeepakotlin.models.Expense
 import com.aethernadev.cashkeepakotlin.models.ExpenseLimitType
@@ -10,7 +10,6 @@ import com.nhaarman.mockito_kotlin.mock
 import org.joda.money.CurrencyUnit
 import org.joda.money.Money
 import org.junit.Before
-import org.junit.Ignore
 import org.junit.Test
 import org.mockito.Mockito.`when`
 import org.mockito.Mockito.verify
@@ -22,33 +21,35 @@ import java.math.BigDecimal
  */
 class HomePresenterTest {
 
+    val TEST_CURRENCY : CurrencyUnit = CurrencyUnit.AUD;
+
     internal var mockHomeInteractor: HomeInteractor = mock()
     internal var mockUi: HomeUI = mock()
-    internal var mockCurrencyConfigConfig: CurrencyConfig = mock()
-    internal var mockAppConfig: AppConfig = AppConfig(mockCurrencyConfigConfig)
-    internal var homePresenter: HomePresenter = HomePresenter(mockHomeInteractor, mockAppConfig)
+    internal val mockConfigInteractor: ConfigInteractor = mock();
+    internal var mockAppConfig: AppConfig? = null
+    internal var homePresenter: HomePresenter? = null
 
     @Before
     fun setup() {
-        homePresenter.attach(mockUi)
+        `when`(mockConfigInteractor.getSettings()).thenReturn(Observable.just(TEST_CURRENCY))
+        mockAppConfig = AppConfig(mockConfigInteractor)
+        homePresenter = HomePresenter(mockHomeInteractor, mockAppConfig!!)
+
+        homePresenter!!.attach(mockUi)
     }
 
-    @Ignore //todo REPAIR!
     @Test
     fun should_display_toast_on_click() {
 
         //having
-
         val categories: List<Category> = mock()
-        val currency: CurrencyUnit = CurrencyUnit.AUD
         `when`(mockHomeInteractor.getCategories()).thenReturn(Observable.just(categories))
-//        `when`(mockCurrencyConfigConfig.appCurrency).thenReturn(currency)
 
         //when
-        homePresenter.onAddExpenseClick()
+        homePresenter!!.onAddExpenseClick()
 
         //then
-        verify<HomeUI>(mockUi).displayAddExpenseDialog(categories, currency)
+        verify<HomeUI>(mockUi).displayAddExpenseDialog(categories, TEST_CURRENCY)
     }
 
     @Test
@@ -57,25 +58,25 @@ class HomePresenterTest {
         val testSpendings = LimitSpendings(TEST_LIMIT_100, listOf(TEST_EXPENSE_15))
         `when`(mockHomeInteractor.getTodayOutstandingLimit()).thenReturn(Observable.just(testSpendings))
         //when
-        homePresenter.loadLimit()
+        homePresenter!!.loadLimit()
 
         //then
         verify<HomeUI>(mockUi).displayAvailableAndSpent(AMOUNT_85, YEN_CURRENCY.currencyCode, AMOUNT_15)
     }
 
-//    @Test //TODO settings is a dependency. |Shouldn't be done via interactor ?
+//    @Test
 //    fun should_add_expense(){
 //
 //        //having
 //        val amount = "23.45"
 //        val category = Category.CLOTHING
-//        `when`(mockSettingsInteractor.getSettings()).thenReturn(Observable.just(null))
+//        `when`(mockHomeInteractor.addExpense(any())).thenReturn(Observable.just(mock()))
 //
 //        //when
-//        homePresenter.addExpense(amount, category)
+//        homePresenter!!.addExpense(amount, category)
 //
 //        //then
-//        verify(mockHomeInteractor).addExpense(Expense(amount = Money.of()))
+//        verify(mockUi!!).displayAvailableAndSpent(any(),any(), any())
 //    }
 
     companion object {
