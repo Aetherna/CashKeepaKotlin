@@ -11,7 +11,5 @@ import rx.Observable
  */
 open class ConfigInteractor(val repo: Repo, schedulers: SchedulersWrapper) : BaseInteractor(schedulers) {
 
-    open fun getSettings(): Observable<CurrencyUnit> {
-        return wrapAsJustObservable { repo.getAppCurrency() }
-    }
+    open fun getSettings(): Observable<CurrencyUnit> = wrapAsJustObservable { repo.getAppCurrency() }
 }

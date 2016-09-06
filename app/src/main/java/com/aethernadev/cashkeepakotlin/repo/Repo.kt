@@ -28,14 +28,17 @@ interface Repo {
 
     fun saveExpense(expense: Expense)
 
-    fun getAppCurrency(): CurrencyUnit
+    fun getAppCurrency(): CurrencyUnit?
 }
 
 class CashKeepaRepo(val realm: Realm) : Repo {
 
-    override fun getAppCurrency(): CurrencyUnit {
-        val result = realm.where(ExpenseLimitRealm::class.java).findAllSorted("created", Sort.DESCENDING).first()
-        return mapAppSettingsFrom(result)
+    override fun getAppCurrency(): CurrencyUnit? {
+        val result = realm.where(ExpenseLimitRealm::class.java).findAllSorted("created", Sort.DESCENDING).firstOrNull()
+        if (result != null) {
+            return mapAppSettingsFrom(result)
+        }
+        return null
     }
 
     override fun saveLimit(limit: Limit) {

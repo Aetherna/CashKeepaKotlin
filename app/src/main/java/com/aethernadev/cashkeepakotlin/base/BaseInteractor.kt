@@ -7,10 +7,14 @@ import rx.Observable
  */
 abstract class BaseInteractor(val schedulers: SchedulersWrapper) {
 
-    open fun <T> wrapAsJustObservable(operation: () -> T): Observable<T> {
-        return Observable.just(operation())
-                .subscribeOn(schedulers.ioScheduler)
-                .observeOn(schedulers.uiScheduler)
+    open fun <T> wrapAsJustObservable(operation: () -> T?): Observable<T> {
+        val value = operation()
+        if (value != null) {
+            return Observable.just(value)
+                    .subscribeOn(schedulers.ioScheduler)
+                    .observeOn(schedulers.uiScheduler)
+        }
+        return Observable.empty()
     }
 
     open fun <T> wrapAsListObservable(operation: () -> List<T>): Observable<T> {
